@@ -113,3 +113,10 @@ textarea { resize: none; }
 
 .card-enter { animation: rise 0.28s cubic-bezier(0.22, 1, 0.36, 1); }
 @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* Clip frosted backdrop-filter to the rounded corners (Chromium needs this). */
+.paper, .neu, .card, .legal, .leather, .metal { overflow: hidden; }
+
+/* Invisible scrollbars — content still scrolls. */
+::-webkit-scrollbar { width: 0 !important; height: 0 !important; }
+* { scrollbar-width: none; }

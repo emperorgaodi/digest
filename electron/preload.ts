@@ -26,6 +26,9 @@ export interface DigestApi {
   openArticle: (link: string) => Promise<void>
   toggleWidget: () => Promise<void>
   openDataFolder: () => Promise<void>
+  minimizeWindow: () => Promise<void>
+  toggleMaximize: () => Promise<void>
+  closeWindow: () => Promise<void>
   mode: 'app' | 'widget'
 }
 
@@ -54,6 +57,9 @@ const api: DigestApi = {
   openArticle: (link) => ipcRenderer.invoke('article:open', link),
   toggleWidget: () => ipcRenderer.invoke('widget:toggle'),
   openDataFolder: () => ipcRenderer.invoke('data:openFolder'),
+  minimizeWindow: () => ipcRenderer.invoke('window:minimize'),
+  toggleMaximize: () => ipcRenderer.invoke('window:maximize'),
+  closeWindow: () => ipcRenderer.invoke('window:close'),
   mode: new URLSearchParams(location.search).has('widget') ? 'widget' : 'app',
 }
 

@@ -25,7 +25,6 @@ function createMainWindow() {
     width: 1120, height: 800, minWidth: 760, minHeight: 540,
     backgroundColor: '#12162e',
     titleBarStyle: 'hidden',
-    titleBarOverlay: { color: 'rgba(0,0,0,0)', symbolColor: '#1f2c58', height: 40 },
     webPreferences: { preload: PRELOAD },
   })
   loadInto(mainWin, false)
@@ -242,6 +241,10 @@ function registerIpc() {
   })
 
   ipcMain.handle('data:openFolder', () => shell.showItemInFolder(dataFilePath()))
+
+  ipcMain.handle('window:minimize', (e) => BrowserWindow.fromWebContents(e.sender)?.minimize())
+  ipcMain.handle('window:maximize', (e) => { const w = BrowserWindow.fromWebContents(e.sender); if (w) w.isMaximized() ? w.unmaximize() : w.maximize() })
+  ipcMain.handle('window:close', (e) => BrowserWindow.fromWebContents(e.sender)?.close())
 }
 
 app.whenReady().then(async () => {
