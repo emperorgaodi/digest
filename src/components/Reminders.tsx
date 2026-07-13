@@ -20,7 +20,7 @@ export default function Reminders({ data }: { data: AppData }) {
   }
 
   return (
-    <div className="h-full overflow-y-auto">
+    <div className="h-full overflow-y-auto fade-scroll-edges">
       <header className="metal drag sticky top-3 z-10 mx-3 rounded-[22px] px-8 pb-4 pt-5">
         <h1 className="engraved text-[28px] font-bold tracking-tight">Reminders</h1>
       </header>

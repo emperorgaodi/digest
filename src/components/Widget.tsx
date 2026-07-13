@@ -28,7 +28,7 @@ export default function Widget({ data }: { data: AppData | null }) {
         </header>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pb-4 pt-1">
+      <div className="flex-1 overflow-y-auto px-4 pb-4 pt-1 fade-scroll-edges">
         {dueReminders.length > 0 && (
           <div className="paper mb-3.5 p-2.5">
             {dueReminders.map((r) => (

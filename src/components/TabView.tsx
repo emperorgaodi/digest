@@ -15,7 +15,7 @@ export default function TabView({ data, tab }: { data: AppData; tab: Tab }) {
   }
 
   return (
-    <div className="h-full overflow-y-auto">
+    <div className="h-full overflow-y-auto fade-scroll-edges">
       <header className="metal drag sticky top-3 z-10 mx-3 rounded-[22px] px-8 pb-4 pt-5">
         <div className="flex items-start justify-between">
           <div>

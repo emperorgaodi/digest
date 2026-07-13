@@ -8,7 +8,7 @@ export default function ArticleCard({ item, compact = false }: { item: FeedItem;
     if (!item.read) api.markRead(item.id, true)
   }
   return (
-    <div onClick={open} className={`paper card-enter group cursor-pointer px-4 ${compact ? 'py-2.5' : 'py-3.5'} transition-transform active:translate-y-px`}>
+    <div onClick={open} className={`paper scroll-fade group cursor-pointer px-4 ${compact ? 'py-2.5' : 'py-3.5'} transition-transform active:translate-y-px`}>
       <div className="flex items-start gap-3">
         <span className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${item.read ? 'bg-transparent' : 'bg-accent'}`}
           style={item.read ? undefined : { boxShadow: 'inset 0 1px 1px rgba(255,255,255,.6), 0 1px 2px rgba(0,0,0,.4)' }} />
