@@ -244,7 +244,7 @@ function registerIpc() {
 
   ipcMain.handle('window:minimize', (e) => BrowserWindow.fromWebContents(e.sender)?.minimize())
   ipcMain.handle('window:maximize', (e) => { const w = BrowserWindow.fromWebContents(e.sender); if (w) w.isMaximized() ? w.unmaximize() : w.maximize() })
-  ipcMain.handle('window:close', (e) => BrowserWindow.fromWebContents(e.sender)?.close())
+  ipcMain.handle('window:close', () => app.quit())
 }
 
 app.whenReady().then(async () => {
