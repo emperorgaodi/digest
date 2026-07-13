@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --accent-rgb: 10 132 255; /* set at runtime from settings.accent */
+}
+
+html, body, #root { height: 100%; }
+body {
+  @apply font-sf antialiased;
+  color: #eef1ff;
+  margin: 0;
+  overflow: hidden;
+  background-color: #12162e;
+  background-image:
+    radial-gradient(44rem 34rem at 8% 4%, rgb(var(--accent-rgb) / 0.55), transparent 60%),
+    radial-gradient(36rem 36rem at 94% 8%, rgba(180, 90, 255, 0.45), transparent 60%),
+    radial-gradient(44rem 36rem at 86% 96%, rgba(60, 210, 230, 0.42), transparent 62%),
+    radial-gradient(32rem 30rem at 14% 98%, rgba(255, 90, 150, 0.38), transparent 60%),
+    linear-gradient(160deg, #1d2450, #0f1226);
+}
+
+/* ---- Liquid Glass -----------------------------------------------------
+   Highly translucent, luminous surfaces. NO hard borders — edges are a soft
+   specular rim (inset highlights) so panels melt into the scene. */
+
+/* Light liquid panels (cards, modals, notes) — dark text. */
+.paper, .neu, .card, .legal, .glass, .glass-strong {
+  background: linear-gradient(135deg, rgba(255,255,255,0.62), rgba(255,255,255,0.40));
+  -webkit-backdrop-filter: blur(30px) saturate(185%);
+  backdrop-filter: blur(30px) saturate(185%);
+  border: 0;
+  border-radius: 22px;
+  box-shadow:
+    0 10px 34px rgba(0,0,0,0.28),
+    inset 0 1px 1px rgba(255,255,255,0.95),
+    inset 0 0 0 1px rgba(255,255,255,0.30),
+    inset 0 -14px 26px rgba(255,255,255,0.10);
+}
+.paper.card-enter:hover, .card:hover { box-shadow: 0 14px 40px rgba(0,0,0,0.32), inset 0 1px 1px rgba(255,255,255,1), inset 0 0 0 1px rgba(255,255,255,0.4); }
+
+/* Dark liquid panels (sidebar, widget shell) — light text. */
+.leather {
+  background: linear-gradient(135deg, rgba(36,42,74,0.46), rgba(18,22,46,0.30));
+  -webkit-backdrop-filter: blur(34px) saturate(180%);
+  backdrop-filter: blur(34px) saturate(180%);
+  border: 0;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.20), inset -1px 0 0 rgba(255,255,255,0.08);
+}
+.stitch { box-shadow: none; border: 0; }
+.linen { background: transparent; }
+
+/* Liquid title bar. */
+.metal {
+  background: linear-gradient(180deg, rgba(255,255,255,0.42), rgba(255,255,255,0.24));
+  -webkit-backdrop-filter: blur(34px) saturate(190%);
+  backdrop-filter: blur(34px) saturate(190%);
+  border: 0;
+  box-shadow: 0 8px 26px rgba(0,0,0,0.16), inset 0 1px 1px rgba(255,255,255,0.8);
+}
+
+/* Accent liquid button (primary). */
+.gloss {
+  background: linear-gradient(180deg, rgb(var(--accent-rgb) / 0.95), rgb(var(--accent-rgb) / 0.78));
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 0;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgb(var(--accent-rgb) / 0.45), inset 0 1px 1px rgba(255,255,255,0.6), inset 0 -6px 12px rgba(0,0,0,0.14);
+  color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  transition: filter .15s ease, transform .12s ease;
+}
+.gloss:hover { filter: brightness(1.07); }
+.gloss:active { transform: translateY(1px); filter: brightness(0.96); }
+/* Selected nav pill: tight shadow, no long glow. */
+.nav-active { box-shadow: 0 2px 8px rgb(var(--accent-rgb) / 0.38), inset 0 1px 1px rgba(255,255,255,0.55) !important; }
+
+/* Clear liquid button (secondary). */
+.btn-metal {
+  background: linear-gradient(180deg, rgba(255,255,255,0.5), rgba(255,255,255,0.32));
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+  border: 0;
+  border-radius: 15px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.16), inset 0 1px 1px rgba(255,255,255,0.85), inset 0 0 0 1px rgba(255,255,255,0.3);
+  color: #1f2c58; text-shadow: none;
+  transition: filter .15s ease, transform .12s ease;
+}
+.btn-metal:hover { filter: brightness(1.05); }
+.btn-metal:active { transform: translateY(1px); }
+
+/* Translucent well (inputs, checkboxes at rest). */
+.neu-inset { background: rgba(255,255,255,0.20); box-shadow: inset 0 1px 5px rgba(0,0,0,0.20), inset 0 0 0 1px rgba(255,255,255,0.25); border-radius: 14px; }
+
+/* Text treatments. */
+.embossed { color: #eef1ff; text-shadow: 0 1px 3px rgba(0,0,0,0.4); }
+.engraved { color: #1f2c58; text-shadow: 0 1px 0 rgba(255,255,255,0.55); }
+.stamp { color: #ff5f8a; text-shadow: none; }
+.ruled { background-image: none; }
+
+.drag { -webkit-app-region: drag; }
+.no-drag { -webkit-app-region: no-drag; }
+
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.30); border-radius: 11px; border: 3px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.45); }
+::-webkit-scrollbar-track { background: transparent; }
+
+input, textarea, button { font-family: inherit; }
+textarea { resize: none; }
+
+.card-enter { animation: rise 0.28s cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }

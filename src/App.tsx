@@ -1,0 +1,39 @@
+import { useEffect, useState } from 'react'
+import { api, useDigest } from './useDigest'
+import { hexToRgbChannels } from './themes'
+import Sidebar from './components/Sidebar'
+import Digest from './components/Digest'
+import TabView from './components/TabView'
+import Notes from './components/Notes'
+import Reminders from './components/Reminders'
+import Widget from './components/Widget'
+
+export type View = 'digest' | 'notes' | 'reminders' | string
+
+export default function App() {
+  const data = useDigest()
+  const [view, setView] = useState<View>('digest')
+
+  // Apply the chosen accent to the whole document (app + widget windows alike).
+  const accent = data?.settings.accent ?? '#0A84FF'
+  useEffect(() => {
+    document.documentElement.style.setProperty('--accent-rgb', hexToRgbChannels(accent))
+  }, [accent])
+
+  if (api.mode === 'widget') return <Widget data={data} />
+  if (!data) return <div className="linen flex h-full items-center justify-center embossed">Loading…</div>
+
+  const tab = data.tabs.find((t) => t.id === view)
+
+  return (
+    <div className="flex h-full linen gap-3 p-3">
+      <Sidebar data={data} view={view} onSelect={setView} />
+      <main className="relative flex-1 overflow-hidden rounded-[26px]">
+        {view === 'digest' && <Digest data={data} onOpenTab={setView} />}
+        {view === 'notes' && <Notes data={data} />}
+        {view === 'reminders' && <Reminders data={data} />}
+        {tab && <TabView data={data} tab={tab} />}
+      </main>
+    </div>
+  )
+}
