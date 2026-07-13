@@ -120,3 +120,6 @@ textarea { resize: none; }
 /* Invisible scrollbars — content still scrolls. */
 ::-webkit-scrollbar { width: 0 !important; height: 0 !important; }
 * { scrollbar-width: none; }
+
+/* Widget window is transparent — no rectangular backdrop, so corners stay round. */
+html.widget, html.widget body, html.widget #root { background: transparent !important; }

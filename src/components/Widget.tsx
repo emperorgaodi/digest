@@ -15,16 +15,22 @@ export default function Widget({ data }: { data: AppData | null }) {
     : []
 
   return (
-    <div className="leather flex h-full flex-col rounded-[24px] overflow-hidden">
-      <header className="drag flex items-center gap-2 px-4 py-3" style={{ boxShadow: 'inset 0 -1px 0 rgba(0,0,0,.4)' }}>
-        <span className="embossed text-[15px] font-bold tracking-tight">Digest</span>
-        {unread > 0 && <span className="gloss rounded-full px-2 py-0.5 text-[11px] font-bold">{unread}</span>}
-        <button onClick={() => api.toggleWidget()} className="btn-metal no-drag ml-auto px-2.5 py-1 text-[12px] font-medium" title="Open full app">Expand ↗</button>
-      </header>
+    <div className="leather flex h-full flex-col rounded-[22px] overflow-hidden">
+      {/* Grab handle — the whole top strip drags the window. */}
+      <div className="drag flex flex-col items-stretch">
+        <div className="flex justify-center pt-2">
+          <div className="h-1 w-9 rounded-full bg-white/30" title="Drag to move" />
+        </div>
+        <header className="flex items-center gap-2 px-4 pb-3 pt-2">
+          <span className="embossed text-[15px] font-bold tracking-tight">Digest</span>
+          {unread > 0 && <span className="gloss rounded-full px-2 py-0.5 text-[11px] font-bold">{unread}</span>}
+          <button onClick={() => api.toggleWidget()} className="btn-metal no-drag ml-auto px-2.5 py-1 text-[12px] font-medium" title="Open full app">Expand ↗</button>
+        </header>
+      </div>
 
-      <div className="flex-1 overflow-y-auto p-2.5">
+      <div className="flex-1 overflow-y-auto px-4 pb-4 pt-1">
         {dueReminders.length > 0 && (
-          <div className="paper mb-3 p-2">
+          <div className="paper mb-3.5 p-2.5">
             {dueReminders.map((r) => (
               <div key={r.id} className="flex items-center gap-2 px-1 py-1.5">
                 <button onClick={() => api.updateReminder(r.id, { done: true })} className="h-4 w-4 shrink-0 rounded-full"
@@ -38,7 +44,7 @@ export default function Widget({ data }: { data: AppData | null }) {
           </div>
         )}
 
-        <div className="space-y-2.5">
+        <div className="space-y-3">
           {items.length === 0 && <p className="mt-10 text-center text-[13px] embossed">No headlines yet.</p>}
           {items.map((it) => <ArticleCard key={it.id} item={it} compact />)}
         </div>
