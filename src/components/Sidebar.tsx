@@ -21,9 +21,9 @@ export default function Sidebar({
   return (
     <aside className="leather drag flex h-full w-64 shrink-0 flex-col rounded-[26px] px-3 pt-4">
       <div className="no-drag group mb-3 flex items-center gap-2 px-1">
-        <button onClick={() => api.closeWindow()} title="Close" className="grid h-[13px] w-[13px] place-items-center rounded-full bg-[#ff5f57]"><span className="text-[9px] font-bold leading-none text-black/55 opacity-0 group-hover:opacity-100">x</span></button>
-        <button onClick={() => api.minimizeWindow()} title="Minimise" className="grid h-[13px] w-[13px] place-items-center rounded-full bg-[#febc2e]"><span className="text-[11px] font-bold leading-none text-black/55 opacity-0 group-hover:opacity-100">-</span></button>
-        <button onClick={() => api.toggleMaximize()} title="Zoom" className="grid h-[13px] w-[13px] place-items-center rounded-full bg-[#28c840]"><span className="text-[9px] font-bold leading-none text-black/55 opacity-0 group-hover:opacity-100">+</span></button>
+        <button onClick={() => api.closeWindow()} title="Close" className="grid h-[13px] w-[13px] place-items-center rounded-full bg-[#ff5f57]"><span className="text-[9px] font-bold leading-none relative -top-px text-black/55 opacity-0 group-hover:opacity-100">x</span></button>
+        <button onClick={() => api.minimizeWindow()} title="Minimise" className="grid h-[13px] w-[13px] place-items-center rounded-full bg-[#febc2e]"><span className="text-[11px] font-bold leading-none relative -top-px text-black/55 opacity-0 group-hover:opacity-100">-</span></button>
+        <button onClick={() => api.toggleMaximize()} title="Zoom" className="grid h-[13px] w-[13px] place-items-center rounded-full bg-[#28c840]"><span className="text-[9px] font-bold leading-none relative -top-px text-black/55 opacity-0 group-hover:opacity-100">+</span></button>
       </div>
       <div className="px-2 pb-4">
         <h1 className="embossed text-[22px] font-bold tracking-tight">Digest</h1>

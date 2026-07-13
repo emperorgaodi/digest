@@ -140,3 +140,8 @@ html.widget, html.widget body, html.widget #root { background: transparent !impo
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 22px, #000 calc(100% - 56px), transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0, #000 22px, #000 calc(100% - 56px), transparent 100%);
 }
+
+/* Widget window sits over other apps (no gradient behind) — make it more opaque
+   so it reads clearly, while keeping the frosted/gradient glass look. */
+html.widget .leather { background: linear-gradient(135deg, rgba(30,34,62,0.93), rgba(16,20,40,0.89)) !important; }
+html.widget .paper { background: linear-gradient(135deg, rgba(255,255,255,0.93), rgba(255,255,255,0.85)) !important; }
