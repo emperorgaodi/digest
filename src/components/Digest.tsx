@@ -10,12 +10,13 @@ export default function Digest({ data, onOpenTab }: { data: AppData; onOpenTab: 
   const hasAny = data.items.length > 0
 
   return (
-    <div className="h-full overflow-y-auto fade-scroll-edges">
-      <header className="metal drag sticky top-3 z-10 mx-3 rounded-[22px] px-8 pb-4 pt-5">
+    <div className="flex h-full flex-col">
+      <header className="metal drag shrink-0 z-10 mx-3 mt-3 rounded-[22px] px-8 pb-4 pt-5">
         <p className="stamp text-[12px] font-bold uppercase tracking-wide">{today}</p>
         <h1 className="engraved text-[28px] font-bold tracking-tight">Front Page</h1>
       </header>
 
+      <div className="flex-1 overflow-y-auto fade-scroll-edges">
       <div className="mx-auto max-w-3xl px-8 py-6">
         {!hasAny && (
           <div className="mt-20 text-center embossed">
@@ -43,6 +44,7 @@ export default function Digest({ data, onOpenTab }: { data: AppData; onOpenTab: 
             <button onClick={() => api.markAllRead()} className="btn-metal px-4 py-2 text-[13px] font-medium">Mark everything read</button>
           </div>
         )}
+      </div>
       </div>
     </div>
   )

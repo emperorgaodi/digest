@@ -20,11 +20,12 @@ export default function Reminders({ data }: { data: AppData }) {
   }
 
   return (
-    <div className="h-full overflow-y-auto fade-scroll-edges">
-      <header className="metal drag sticky top-3 z-10 mx-3 rounded-[22px] px-8 pb-4 pt-5">
+    <div className="flex h-full flex-col">
+      <header className="metal drag shrink-0 z-10 mx-3 mt-3 rounded-[22px] px-8 pb-4 pt-5">
         <h1 className="engraved text-[28px] font-bold tracking-tight">Reminders</h1>
       </header>
 
+      <div className="flex-1 overflow-y-auto fade-scroll-edges">
       <div className="mx-auto max-w-2xl px-8 py-6">
         <div className="paper mb-7 flex items-center gap-2 p-2">
           <input value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && add()}
@@ -41,6 +42,7 @@ export default function Reminders({ data }: { data: AppData }) {
         {done.length > 0 && <Group title="Completed" list={done} />}
 
         {data.reminders.length === 0 && <p className="mt-16 text-center text-[14px] embossed">Nothing yet. Add your first reminder above.</p>}
+      </div>
       </div>
     </div>
   )

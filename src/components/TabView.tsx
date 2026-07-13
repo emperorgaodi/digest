@@ -15,8 +15,8 @@ export default function TabView({ data, tab }: { data: AppData; tab: Tab }) {
   }
 
   return (
-    <div className="h-full overflow-y-auto fade-scroll-edges">
-      <header className="metal drag sticky top-3 z-10 mx-3 rounded-[22px] px-8 pb-4 pt-5">
+    <div className="flex h-full flex-col">
+      <header className="metal drag shrink-0 z-10 mx-3 mt-3 rounded-[22px] px-8 pb-4 pt-5">
         <div className="flex items-start justify-between">
           <div>
             <h1 className="engraved text-[28px] font-bold tracking-tight">{tab.name}</h1>
@@ -34,6 +34,7 @@ export default function TabView({ data, tab }: { data: AppData; tab: Tab }) {
         </div>
       </header>
 
+      <div className="flex-1 overflow-y-auto fade-scroll-edges">
       <div className="mx-auto max-w-3xl space-y-3 px-8 py-6">
         {items.length === 0 && (
           <p className="mt-16 text-center text-[14px] embossed">
@@ -41,6 +42,7 @@ export default function TabView({ data, tab }: { data: AppData; tab: Tab }) {
           </p>
         )}
         {items.map((it) => <ArticleCard key={it.id} item={it} />)}
+      </div>
       </div>
     </div>
   )
