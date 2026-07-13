@@ -74,7 +74,7 @@ export default function Sidebar({
 
 function FootBtn({ onClick, label, swatch }: { onClick: () => void; label: string; swatch?: string }) {
   return (
-    <button onClick={onClick} className="btn-metal flex w-full items-center gap-2.5 px-3 py-2 text-[14px] font-medium">
+    <button onClick={onClick} className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-[14px] font-medium embossed transition-colors hover:bg-white/10">
       {swatch && <span className="h-3.5 w-3.5 rounded-full" style={{ background: swatch, boxShadow: 'inset 0 1px 0 rgba(255,255,255,.5), 0 1px 1px rgba(0,0,0,.4)' }} />}
       {label}
     </button>

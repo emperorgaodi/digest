@@ -21,60 +21,63 @@ export default function Notes({ data }: { data: AppData }) {
     setSelectedId(note.id); setShowTrash(false)
   }
 
-  const emptyPrompt = (
-    <div className="flex h-full flex-col items-center justify-center gap-3 text-center opacity-50">
-      <p className="text-[15px] font-medium text-[#5b6472]">Select a note to read, or start a new one</p>
+  const prompt = (
+    <div className="flex h-full flex-col items-center justify-center gap-3 text-center opacity-60">
+      <p className="text-[15px] font-medium embossed">Select a note to read, or start a new one</p>
       <button onClick={newNote} className="gloss px-4 py-2 text-[14px] font-semibold">Create a new note</button>
     </div>
   )
 
   return (
-    <div className="h-full p-3">
-      {/* One cohesive panel: list + editor share a single frosted surface. */}
-      <div className="paper flex h-full overflow-hidden">
+    <div className="flex h-full flex-col">
+      <header className="metal drag shrink-0 z-10 mx-3 mt-3 flex items-center justify-between rounded-[22px] px-8 pb-4 pt-5">
+        <h1 className="engraved text-[28px] font-bold tracking-tight">Notes</h1>
+        <button onClick={newNote} className="gloss px-3.5 py-2 text-[13px] font-semibold">New note</button>
+      </header>
+
+      <div className="flex flex-1 gap-3 overflow-hidden p-3">
         {live.length === 0 ? (
-          emptyPrompt
+          prompt
         ) : (
           <>
-            <div className="flex w-60 shrink-0 flex-col border-r border-black/10 bg-black/[0.03]">
-              <div className="drag flex items-center justify-between px-3 pb-3 pt-4">
-                <h2 className="engraved text-[17px] font-bold tracking-tight">Notes</h2>
-                <button onClick={newNote} className="gloss no-drag px-2.5 py-1 text-[12px] font-semibold">New</button>
-              </div>
-              <div className="no-drag flex-1 overflow-y-auto px-2 pb-2">
-                {live.map((n) => (
-                  <button key={n.id} onClick={() => { setSelectedId(n.id); setShowTrash(false) }}
-                    className={`mb-1 block w-full rounded-xl px-3 py-2.5 text-left transition-colors ${
-                      !showTrash && selectedId === n.id ? 'bg-accent/15 ring-1 ring-accent/40' : 'hover:bg-black/5'
-                    }`}>
-                    <div className="truncate text-[14px] font-semibold text-[#2e2c26]">{n.title || 'New note'}</div>
-                    <div className="mt-0.5 truncate text-[12px] text-[#7c766a]">{n.body.replace(/\n/g, ' ').trim() || 'No additional text'}</div>
-                    <div className="mt-0.5 text-[11px] text-[#a49e8e]">{timeAgo(n.updatedAt)}</div>
-                  </button>
-                ))}
+            {/* Note list — frosted cards on the gradient, like the front page. */}
+            <div className="fade-scroll-edges flex w-64 shrink-0 flex-col gap-2 overflow-y-auto pr-0.5">
+              {live.map((n) => (
+                <button key={n.id} onClick={() => { setSelectedId(n.id); setShowTrash(false) }}
+                  className="paper block w-full px-3.5 py-3 text-left transition-transform active:translate-y-px"
+                  style={!showTrash && selectedId === n.id ? { outline: '2px solid rgb(var(--accent-rgb))', outlineOffset: '-1px' } : undefined}>
+                  <div className="truncate text-[14px] font-semibold text-[#2e2c26]">{n.title || 'New note'}</div>
+                  <div className="mt-0.5 truncate text-[12px] text-[#7c766a]">{n.body.replace(/\n/g, ' ').trim() || 'No additional text'}</div>
+                  <div className="mt-0.5 text-[11px] text-[#a49e8e]">{timeAgo(n.updatedAt)}</div>
+                </button>
+              ))}
 
-                {trashed.length > 0 && (
-                  <div className="mt-3 border-t border-black/10 pt-2">
-                    <button onClick={() => setShowTrash((s) => !s)} className="w-full px-2 py-1 text-left text-[12px] font-medium text-[#8a8474] hover:text-[#5b5548]">
-                      {showTrash ? 'Hide' : 'Show'} recently deleted ({trashed.length})
-                    </button>
-                    {showTrash && trashed.map((n) => (
-                      <div key={n.id} className="mb-1 mt-1 flex items-center gap-2 rounded-xl px-3 py-2 hover:bg-black/5">
-                        <div className="min-w-0 flex-1">
-                          <div className="truncate text-[13px] font-medium text-[#7c766a]">{n.title || 'New note'}</div>
-                          <div className="truncate text-[11px] text-[#a49e8e]">deleted {timeAgo(n.deletedAt!)}</div>
-                        </div>
-                        <button onClick={() => { api.restoreNote(n.id); setSelectedId(n.id); setShowTrash(false) }} className="text-[12px] font-semibold text-accent">Restore</button>
-                        <button onClick={() => api.purgeNote(n.id)} title="Delete forever" className="text-[12px] text-[#b3ac9c] hover:text-red-600">x</button>
+              {trashed.length > 0 && (
+                <div className="mt-1">
+                  <button onClick={() => setShowTrash((s) => !s)} className="w-full px-1 py-1 text-left text-[12px] font-medium embossed opacity-80 hover:opacity-100">
+                    {showTrash ? 'Hide' : 'Show'} recently deleted ({trashed.length})
+                  </button>
+                  {showTrash && trashed.map((n) => (
+                    <div key={n.id} className="paper mt-1 flex items-center gap-2 px-3 py-2 opacity-90">
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-[13px] font-medium text-[#7c766a]">{n.title || 'New note'}</div>
+                        <div className="truncate text-[11px] text-[#a49e8e]">deleted {timeAgo(n.deletedAt!)}</div>
                       </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+                      <button onClick={() => { api.restoreNote(n.id); setSelectedId(n.id); setShowTrash(false) }} className="text-[12px] font-semibold text-accent">Restore</button>
+                      <button onClick={() => api.purgeNote(n.id)} title="Delete forever" className="text-[12px] text-[#b3ac9c] hover:text-red-600">x</button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
+            {/* Editor — a single frosted panel. */}
             <div className="flex-1 overflow-hidden">
-              {selected ? <Editor key={selected.id} note={selected} onDeleted={() => setSelectedId(null)} /> : emptyPrompt}
+              {selected ? (
+                <div className="paper h-full overflow-hidden">
+                  <Editor key={selected.id} note={selected} onDeleted={() => setSelectedId(null)} />
+                </div>
+              ) : prompt}
             </div>
           </>
         )}
