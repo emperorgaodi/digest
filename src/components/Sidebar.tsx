@@ -19,7 +19,7 @@ export default function Sidebar({
   const accent = data.settings.accent
 
   return (
-    <aside className="leather drag flex h-full w-64 shrink-0 flex-col rounded-[26px] px-3 pt-8">
+    <aside className="leather drag flex h-full w-64 shrink-0 flex-col rounded-[26px] px-3 pt-12">
       <div className="px-2 pb-4">
         <h1 className="embossed text-[22px] font-bold tracking-tight">Digest</h1>
       </div>

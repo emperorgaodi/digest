@@ -16,7 +16,7 @@ export default function TabView({ data, tab }: { data: AppData; tab: Tab }) {
 
   return (
     <div className="h-full overflow-y-auto">
-      <header className="metal drag sticky top-0 z-10 px-8 pb-3 pt-10">
+      <header className="metal drag sticky top-3 z-10 mx-3 rounded-[22px] px-8 pb-4 pt-5">
         <div className="flex items-start justify-between">
           <div>
             <h1 className="engraved text-[28px] font-bold tracking-tight">{tab.name}</h1>
