@@ -64,9 +64,9 @@ export default function Notes({ data }: { data: AppData }) {
         {selected ? (
           <Editor key={selected.id} note={selected} onDeleted={() => setSelectedId(null)} />
         ) : (
-          <div className="flex h-full flex-col items-center justify-center embossed">
-            <p className="text-[15px]">Select a note, or</p>
-            <button onClick={newNote} className="gloss mt-3 px-4 py-2 text-[14px] font-semibold">Create a new note</button>
+          <div className="flex h-full flex-col items-center justify-center gap-3 text-center opacity-40 embossed">
+            <p className="text-[15px]">Select a note to read, or start a new one</p>
+            <button onClick={newNote} className="gloss px-4 py-2 text-[14px] font-semibold">Create a new note</button>
           </div>
         )}
       </div>
