@@ -108,9 +108,9 @@ function Editor({ note }: { note: Note }) {
     <div className="mx-auto flex h-full max-w-2xl flex-col px-8 pb-4 pt-6">
       <input value={title} onChange={(e) => { setTitle(e.target.value); scheduleSave({ title: e.target.value, body }) }} onBlur={flush}
         autoFocus placeholder="Title" className="bg-transparent text-[26px] font-bold tracking-tight text-white outline-none placeholder:text-white/25" />
-      <div className="mb-4 mt-1.5 text-[12px] text-white/40">Edited {timeAgo(note.updatedAt)} · saved automatically</div>
       <textarea value={body} onChange={(e) => { setBody(e.target.value); scheduleSave({ title, body: e.target.value }) }} onBlur={flush}
-        placeholder="Start writing…" className="flex-1 resize-none bg-transparent text-[15px] leading-relaxed text-white/85 outline-none placeholder:text-white/25" />
+        placeholder="Start writing…" className="mt-3 flex-1 resize-none bg-transparent text-[15px] leading-relaxed text-white/85 outline-none placeholder:text-white/25" />
+        <div className="pt-2 text-[11px] text-white/30">Edited {timeAgo(note.updatedAt)}</div>
     </div>
   )
 }
