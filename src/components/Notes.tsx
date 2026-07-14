@@ -50,7 +50,7 @@ export default function Notes({ data }: { data: AppData }) {
         <button onClick={newNote} className="no-drag gloss px-3.5 py-2 text-[13px] font-semibold">New note</button>
       </header>
 
-      <div className="flex-1 overflow-y-auto p-3">
+      <div className="fade-scroll-edges flex-1 overflow-y-auto p-3">
         {live.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-3 text-center opacity-60">
             <p className="text-[15px] font-medium embossed">No notes yet</p>
@@ -60,7 +60,7 @@ export default function Notes({ data }: { data: AppData }) {
           <div className="mx-auto max-w-2xl space-y-2">
             {live.map((n) => (
               <button key={n.id} onClick={() => setSelectedId(n.id)}
-                className="paper block w-full px-4 py-3 text-left transition-transform active:translate-y-px">
+                className="paper scroll-fade block w-full px-4 py-3 text-left">
                 <div className="truncate text-[15px] font-semibold text-[#2e2c26]">{n.title || 'New note'}</div>
                 <div className="mt-0.5 truncate text-[13px] text-[#7c766a]">{n.body.replace(/\n/g, ' ').trim() || 'No additional text'}</div>
                 <div className="mt-1 text-[11px] text-[#a49e8e]">{timeAgo(n.updatedAt)}</div>
