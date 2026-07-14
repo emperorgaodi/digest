@@ -16,7 +16,7 @@ export default function TabView({ data, tab }: { data: AppData; tab: Tab }) {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="metal drag shrink-0 z-10 mx-3 rounded-[26px] px-8 pb-4 pt-5">
+      <header className="metal drag shrink-0 z-10 rounded-[26px] px-8 pb-4 pt-5">
         <div className="flex items-start justify-between">
           <div>
             <h1 className="embossed text-[28px] font-bold tracking-tight">{tab.name}</h1>

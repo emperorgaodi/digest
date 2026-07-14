@@ -25,9 +25,9 @@ export default function App() {
   const tab = data.tabs.find((t) => t.id === view)
 
   return (
-    <div className="flex h-full linen gap-3 p-3">
+    <div className="flex h-full linen gap-6 p-6">
       <Sidebar data={data} view={view} onSelect={setView} />
-      <main className="relative flex-1 overflow-hidden rounded-[26px]">
+      <main className="relative flex-1">
         {view === 'digest' && <Digest data={data} onOpenTab={setView} />}
         {view === 'notes' && <Notes data={data} />}
         {view === 'reminders' && <Reminders data={data} />}
