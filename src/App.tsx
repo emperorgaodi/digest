@@ -6,9 +6,10 @@ import Digest from './components/Digest'
 import TabView from './components/TabView'
 import Notes from './components/Notes'
 import Reminders from './components/Reminders'
+import Clock from './components/Clock'
 import Widget from './components/Widget'
 
-export type View = 'digest' | 'notes' | 'reminders' | string
+export type View = 'digest' | 'notes' | 'reminders' | 'clock' | string
 
 export default function App() {
   const data = useDigest()
@@ -31,6 +32,7 @@ export default function App() {
         {view === 'digest' && <Digest data={data} onOpenTab={setView} />}
         {view === 'notes' && <Notes data={data} />}
         {view === 'reminders' && <Reminders data={data} />}
+        {view === 'clock' && <Clock />}
         {tab && <TabView data={data} tab={tab} />}
       </main>
     </div>

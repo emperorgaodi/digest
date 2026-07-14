@@ -33,6 +33,7 @@ export default function Sidebar({
         <Row active={view === 'digest'} onClick={() => onSelect('digest')} label="Front Page" badge={totalUnread} />
         <Row active={view === 'notes'} onClick={() => onSelect('notes')} label="Notes" badge={liveNotes} />
         <Row active={view === 'reminders'} onClick={() => onSelect('reminders')} label="Reminders" badge={activeReminders.length} alert={dueSoon > 0} />
+        <Row active={view === 'clock'} onClick={() => onSelect('clock')} label="Clock" badge={0} />
 
         <div className="mb-2 mt-4 border-t border-white/10 px-2 pt-4 text-[11px] font-bold uppercase tracking-wider text-[#c3cbef]" style={{ textShadow: '0 1px 3px rgba(0,0,0,.4)' }}>Topics</div>
         {data.tabs.map((t) => (
