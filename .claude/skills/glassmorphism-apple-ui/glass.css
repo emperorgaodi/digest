@@ -1,0 +1,121 @@
+/* Glassmorphism Apple UI — drop-in stylesheet.
+   Pairs with Tailwind (utilities like text-[15px], rounded-[26px]) but the
+   material classes are plain CSS. Set --accent-rgb from JS at runtime. */
+
+:root {
+  color-scheme: dark;
+  --accent-rgb: 10 132 255; /* R G B channels; theme this live */
+}
+
+html, body, #root { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: #eef1ff;                 /* light text: body is dark glass */
+  margin: 0;
+  overflow: hidden;
+  background-color: #12162e;
+  background-image:
+    radial-gradient(44rem 34rem at 8% 4%,  rgb(var(--accent-rgb) / 0.55), transparent 60%),
+    radial-gradient(36rem 36rem at 94% 8%, rgba(180, 90, 255, 0.45), transparent 60%),
+    radial-gradient(44rem 36rem at 86% 96%, rgba(60, 210, 230, 0.42), transparent 62%),
+    radial-gradient(32rem 30rem at 14% 98%, rgba(255, 90, 150, 0.38), transparent 60%),
+    linear-gradient(160deg, #1d2450, #0f1226);
+}
+
+/* ---- Light frosted panels (dark text): cards, modals, popovers ---- */
+.paper {
+  background: linear-gradient(135deg, rgba(255,255,255,0.62), rgba(255,255,255,0.40));
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+  border: 0;
+  border-radius: 22px;
+  overflow: hidden; /* clip backdrop-filter to the radius (Chromium) */
+  box-shadow:
+    0 10px 34px rgba(0,0,0,0.28),          /* outer depth */
+    inset 0 1px 1px rgba(255,255,255,0.95), /* bright top rim */
+    inset 0 0 0 1px rgba(255,255,255,0.30), /* hairline rim (NOT a border) */
+    inset 0 -14px 26px rgba(255,255,255,0.10);
+}
+.paper:hover { box-shadow: 0 14px 40px rgba(0,0,0,0.32), inset 0 1px 1px #fff, inset 0 0 0 1px rgba(255,255,255,0.4); }
+
+/* ---- Dark frosted panels (light text): sidebar, top bars ---- */
+.leather, .metal {
+  background: linear-gradient(135deg, rgba(36,42,74,0.46), rgba(18,22,46,0.30));
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+  border: 0;
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.13),
+    inset 0 1px 0 rgba(255,255,255,0.30),
+    inset 0 -1px 0 rgba(255,255,255,0.10);
+}
+
+/* ---- Primary button: accent gloss ---- */
+.gloss {
+  background: linear-gradient(180deg, rgb(var(--accent-rgb) / 0.95), rgb(var(--accent-rgb) / 0.78));
+  border: 0; border-radius: 15px;
+  color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  box-shadow: 0 8px 20px rgb(var(--accent-rgb) / 0.45), inset 0 1px 1px rgba(255,255,255,0.6), inset 0 -6px 12px rgba(0,0,0,0.14);
+  transition: filter .15s ease, transform .12s ease;
+}
+.gloss:hover { filter: brightness(1.07); }
+.gloss:active { transform: translateY(1px); filter: brightness(0.96); }
+
+/* Selected nav pill — tight glow, not the full button glow */
+.nav-active { box-shadow: 0 2px 8px rgb(var(--accent-rgb) / 0.38), inset 0 1px 1px rgba(255,255,255,0.55) !important; }
+
+/* ---- Secondary button: clear light glass (dark text) ---- */
+.btn-metal {
+  background: linear-gradient(180deg, rgba(255,255,255,0.5), rgba(255,255,255,0.32));
+  border: 0; border-radius: 15px;
+  color: #1f2c58;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.16), inset 0 1px 1px rgba(255,255,255,0.85), inset 0 0 0 1px rgba(255,255,255,0.3);
+  transition: filter .15s ease, transform .12s ease;
+}
+.btn-metal:hover { filter: brightness(1.05); }
+.btn-metal:active { transform: translateY(1px); }
+
+/* ---- Pressed-in well: inputs, checkboxes at rest ---- */
+.neu-inset { background: rgba(255,255,255,0.20); border-radius: 14px; box-shadow: inset 0 1px 5px rgba(0,0,0,0.20), inset 0 0 0 1px rgba(255,255,255,0.25); }
+
+/* ---- Letterpress text ---- */
+.embossed { color: #eef1ff; text-shadow: 0 1px 3px rgba(0,0,0,0.4); }   /* on dark */
+.engraved { color: #141b30; text-shadow: 0 1px 0 rgba(255,255,255,0.45); } /* on light */
+.stamp    { color: #d0245e; }                                            /* accent label */
+
+/* ---- Electron window regions ---- */
+.drag { -webkit-app-region: drag; }
+.no-drag { -webkit-app-region: no-drag; }
+
+/* Transparent mini/widget window: strip the rectangular page background */
+html.widget, html.widget body, html.widget #root { background: transparent !important; }
+
+/* ---- Motion ---- */
+.card-enter { animation: rise 0.28s cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+@keyframes scrollFade {
+  0% { opacity: 0; transform: translateY(10px); }
+  16% { opacity: 1; transform: translateY(0); }
+  85% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@supports (animation-timeline: view()) {
+  .scroll-fade { animation: scrollFade linear both; animation-timeline: view(); animation-range: entry 0% exit 100%; }
+}
+
+/* Soft-fade a scroll container's top (under header) and bottom edges */
+.fade-scroll-edges {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 22px, #000 calc(100% - 56px), transparent 100%);
+          mask-image: linear-gradient(to bottom, transparent 0, #000 22px, #000 calc(100% - 56px), transparent 100%);
+}
+
+/* ---- Native-app hygiene ---- */
+::-webkit-scrollbar { width: 0 !important; height: 0 !important; }
+* { scrollbar-width: none; }
+* { -webkit-user-select: none; user-select: none; }
+input, textarea, [contenteditable="true"] { -webkit-user-select: text; user-select: text; }
+input, textarea, button { font-family: inherit; }
+textarea { resize: none; }
