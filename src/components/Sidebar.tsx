@@ -56,15 +56,13 @@ export default function Sidebar({
                 )
               })}
             </div>
+            <button onClick={() => api.openDataFolder()} title="Opens the folder holding data.json: your tabs, notes, reminders and settings. Copy it to back up." className="mt-3 w-full border-t border-black/10 pt-2.5 text-left text-[12px] font-medium text-[#5b6472] hover:text-[#2e2c26]">Open data folder</button>
           </div>
         )}
 
         <FootBtn onClick={() => setEditorFor('new')} label="New topic" />
         <FootBtn onClick={() => api.toggleWidget()} label="Widget mode" />
         <FootBtn onClick={() => setShowTheme((s) => !s)} label="Appearance" swatch={accent} />
-        <button onClick={() => api.openDataFolder()} className="w-full px-2 py-1 text-left text-[12px] text-[#c3cbef] hover:text-white">
-          Open data folder
-        </button>
       </div>
 
       {editorFor && <TabEditor tab={editingTab} onClose={() => setEditorFor(null)} />}
