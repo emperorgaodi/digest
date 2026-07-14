@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 
 const WD = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+const YEARS = Array.from({ length: 12 }, (_, i) => new Date().getFullYear() - 2 + i)
 
 function sameDay(a: Date, y: number, m: number, d: number) {
   return a.getFullYear() === y && a.getMonth() === m && a.getDate() === d
@@ -46,7 +47,16 @@ export default function DateTimePicker({ value, onChange }: { value: string | nu
       <div className="mb-1.5 flex items-center justify-between">
         <button onClick={() => setView(new Date(view.getFullYear(), view.getMonth() - 1, 1))}
           className="grid h-7 w-7 place-items-center rounded-lg text-[15px] text-[#5b5548] hover:bg-black/[0.06]">‹</button>
-        <div className="text-[13px] font-bold text-[#2e2c26]">{MONTHS[view.getMonth()]} {view.getFullYear()}</div>
+        <div className="flex flex-1 items-center justify-center gap-1">
+          <select value={view.getMonth()} onChange={(e) => setView(new Date(view.getFullYear(), Number(e.target.value), 1))}
+            className="rounded-md bg-black/[0.06] px-1.5 py-1 text-[12px] font-bold text-[#2e2c26] outline-none">
+            {MONTHS.map((m, i) => <option key={i} value={i}>{m}</option>)}
+          </select>
+          <select value={view.getFullYear()} onChange={(e) => setView(new Date(Number(e.target.value), view.getMonth(), 1))}
+            className="rounded-md bg-black/[0.06] px-1.5 py-1 text-[12px] font-bold text-[#2e2c26] outline-none">
+            {YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
+          </select>
+        </div>
         <button onClick={() => setView(new Date(view.getFullYear(), view.getMonth() + 1, 1))}
           className="grid h-7 w-7 place-items-center rounded-lg text-[15px] text-[#5b5548] hover:bg-black/[0.06]">›</button>
       </div>
