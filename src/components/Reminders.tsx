@@ -56,7 +56,7 @@ export default function Reminders({ data }: { data: AppData }) {
           <div className="paper mb-7 p-3.5">
             <input value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && add()}
               placeholder="What do you need to remember?"
-              className="w-full bg-transparent px-1 text-[16px] font-medium text-[#2e2c26] outline-none placeholder:text-[#a49e8e]" />
+              className="w-full bg-transparent px-1 text-[16px] font-medium text-[#2e2c26] outline-none placeholder:text-[#7c766a]" />
             <div className="mt-3 flex flex-wrap items-center gap-2">
               {CHIPS.map((c) => (
                 <button key={c.id} onClick={() => setQuick(c.id)}
