@@ -141,3 +141,7 @@ html.widget, html.widget body, html.widget #root { background: transparent !impo
    so it reads clearly, while keeping the frosted/gradient glass look. */
 html.widget .leather { background: linear-gradient(135deg, rgba(30,34,62,0.93), rgba(16,20,40,0.89)) !important; }
 html.widget .paper { background: linear-gradient(135deg, rgba(255,255,255,0.93), rgba(255,255,255,0.85)) !important; }
+
+/* Native-app feel: Ctrl+A shouldn't select the whole UI. Keep it in fields. */
+* { -webkit-user-select: none; user-select: none; }
+input, textarea, [contenteditable="true"] { -webkit-user-select: text; user-select: text; }
