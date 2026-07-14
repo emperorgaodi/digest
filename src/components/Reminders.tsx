@@ -1,21 +1,25 @@
 import { useState } from 'react'
 import type { AppData, Reminder } from '../../electron/types'
 import { api } from '../useDigest'
-import { formatDue, isOverdue, toLocalInput } from '../util'
+import { formatDue, isOverdue } from '../util'
+import DateTimePicker from './DateTimePicker'
 
 type Quick = 'none' | 'today' | 'tomorrow' | 'custom'
 
-// Turn a quick choice into an ISO due date (or null).
+function defaultDue(): string {
+  const d = new Date(); d.setHours(d.getHours() + 1, 0, 0, 0); return d.toISOString()
+}
+
+// Turn a quick choice into an ISO due date (or null). `custom` is already ISO.
 function quickDue(q: Quick, custom: string): string | null {
   if (q === 'none') return null
-  if (q === 'custom') return custom ? new Date(custom).toISOString() : null
+  if (q === 'custom') return custom || null
   const d = new Date()
   if (q === 'today') {
     d.setHours(18, 0, 0, 0)
     if (d.getTime() <= Date.now()) { const n = new Date(); n.setHours(n.getHours() + 2, 0, 0, 0); return n.toISOString() }
     return d.toISOString()
   }
-  // tomorrow
   d.setDate(d.getDate() + 1); d.setHours(9, 0, 0, 0)
   return d.toISOString()
 }
@@ -52,27 +56,28 @@ export default function Reminders({ data }: { data: AppData }) {
 
       <div className="fade-scroll-edges flex-1 overflow-y-auto">
         <div className="mx-auto max-w-2xl px-8 py-6">
-          {/* Add card — text field + quick-schedule chips (native picker hidden until "Pick…"). */}
+          {/* Add card */}
           <div className="paper mb-7 p-3.5">
             <input value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && add()}
               placeholder="What do you need to remember?"
               className="w-full bg-transparent px-1 text-[16px] font-medium text-[#2e2c26] outline-none placeholder:text-[#7c766a]" />
             <div className="mt-3 flex flex-wrap items-center gap-2">
               {CHIPS.map((c) => (
-                <button key={c.id} onClick={() => setQuick(c.id)}
+                <button key={c.id} onClick={() => { setQuick(c.id); if (c.id === 'custom' && !custom) setCustom(defaultDue()) }}
                   className={`rounded-full px-3 py-1 text-[12px] font-semibold transition-colors ${
                     quick === c.id ? 'gloss' : 'bg-black/[0.06] text-[#5b5548] hover:bg-black/[0.12]'
                   }`}>
                   {c.label}
                 </button>
               ))}
-              {quick === 'custom' && (
-                <input type="datetime-local" value={custom} onChange={(e) => setCustom(e.target.value)} autoFocus
-                  className="rounded-lg bg-black/[0.06] px-2 py-1 text-[12px] text-[#5b5548] outline-none [color-scheme:light]" />
-              )}
               <button onClick={add} disabled={!text.trim()}
                 className="gloss ml-auto px-5 py-1.5 text-[13px] font-semibold disabled:opacity-40">Add</button>
             </div>
+            {quick === 'custom' && (
+              <div className="mt-3">
+                <DateTimePicker value={custom || null} onChange={setCustom} />
+              </div>
+            )}
           </div>
 
           <Group title="Overdue" stamp list={overdue} />
@@ -102,27 +107,30 @@ function Group({ title, list, stamp }: { title: string; list: Reminder[]; stamp?
 function Item({ r }: { r: Reminder }) {
   const [editing, setEditing] = useState(false)
   const [text, setText] = useState(r.text)
-  const [due, setDue] = useState(toLocalInput(r.dueAt))
+  const [due, setDue] = useState<string | null>(r.dueAt)
 
   function saveEdit() {
     setEditing(false)
-    api.updateReminder(r.id, { text: text.trim() || r.text, dueAt: due ? new Date(due).toISOString() : null })
+    api.updateReminder(r.id, { text: text.trim() || r.text, dueAt: due })
   }
 
   return (
-    <div className="paper card-enter flex items-center gap-3 px-4 py-3">
+    <div className="paper card-enter flex items-start gap-3 px-4 py-3">
       <button onClick={() => api.updateReminder(r.id, { done: !r.done })}
-        className={`grid h-6 w-6 shrink-0 place-items-center rounded-full ${r.done ? 'gloss' : ''}`}
+        className={`mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full ${r.done ? 'gloss' : ''}`}
         style={r.done ? undefined : { background: '#faf8f1', boxShadow: 'inset 0 2px 4px rgba(0,0,0,.25)', border: '1px solid #cfc9b6' }}>
         {r.done && <span className="text-[12px] font-bold leading-none text-white">v</span>}
       </button>
 
       {editing ? (
-        <div className="flex flex-1 items-center gap-2">
-          <input autoFocus value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
-            className="flex-1 rounded-lg bg-black/[0.06] px-2 py-1.5 text-[14px] text-[#2e2c26] outline-none" />
-          <input type="datetime-local" value={due} onChange={(e) => setDue(e.target.value)} className="rounded-lg bg-black/[0.06] px-2 py-1.5 text-[12px] [color-scheme:light]" />
-          <button onClick={saveEdit} className="text-[13px] font-semibold text-accent">Save</button>
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <input autoFocus value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
+              className="flex-1 rounded-lg bg-black/[0.06] px-2 py-1.5 text-[14px] text-[#2e2c26] outline-none" />
+            <button onClick={() => setDue(null)} className="rounded-lg px-2 py-1.5 text-[12px] font-medium text-[#7c766a] hover:bg-black/[0.06]">Clear</button>
+            <button onClick={saveEdit} className="gloss px-3 py-1.5 text-[12px] font-semibold">Save</button>
+          </div>
+          <div className="mt-2"><DateTimePicker value={due} onChange={setDue} /></div>
         </div>
       ) : (
         <div className="min-w-0 flex-1 cursor-text" onClick={() => setEditing(true)}>
@@ -131,7 +139,7 @@ function Item({ r }: { r: Reminder }) {
         </div>
       )}
 
-      <button onClick={() => api.deleteReminder(r.id)} className="shrink-0 text-[#b3ac9c] hover:text-red-600" title="Delete">x</button>
+      <button onClick={() => api.deleteReminder(r.id)} className="mt-0.5 shrink-0 text-[#b3ac9c] hover:text-red-600" title="Delete">x</button>
     </div>
   )
 }
