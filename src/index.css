@@ -54,7 +54,7 @@ body {
 
 /* Liquid title bar. */
 .metal {
-  background: linear-gradient(180deg, rgba(255,255,255,0.42), rgba(255,255,255,0.24));
+  background: linear-gradient(180deg, rgba(255,255,255,0.82), rgba(255,255,255,0.70));
   -webkit-backdrop-filter: blur(34px) saturate(190%);
   backdrop-filter: blur(34px) saturate(190%);
   border: 0;
@@ -96,8 +96,8 @@ body {
 
 /* Text treatments. */
 .embossed { color: #eef1ff; text-shadow: 0 1px 3px rgba(0,0,0,0.4); }
-.engraved { color: #1f2c58; text-shadow: 0 1px 0 rgba(255,255,255,0.55); }
-.stamp { color: #ff5f8a; text-shadow: none; }
+.engraved { color: #141b30; text-shadow: 0 1px 0 rgba(255,255,255,0.45); }
+.stamp { color: #d0245e; text-shadow: none; }
 .ruled { background-image: none; }
 
 .drag { -webkit-app-region: drag; }
