@@ -16,7 +16,7 @@ export default function DateTimePicker({ value, onChange }: { value: string | nu
   }, [value])
   const [sel, setSel] = useState<Date>(initial)
   const [view, setView] = useState(new Date(initial.getFullYear(), initial.getMonth(), 1))
-  const [mode, setMode] = useState<'days' | 'months'>('days')
+  const [mode, setMode] = useState<'days' | 'months' | 'years'>('days')
 
   const days = useMemo(() => {
     const firstDay = new Date(view.getFullYear(), view.getMonth(), 1).getDay()
@@ -31,6 +31,7 @@ export default function DateTimePicker({ value, onChange }: { value: string | nu
   const h12 = ((sel.getHours() + 11) % 12) + 1
   const ampm = sel.getHours() >= 12 ? 'PM' : 'AM'
   const minute = sel.getMinutes()
+  const yearStart = view.getFullYear() - (view.getFullYear() % 12)
 
   function commit(next: Date) { setSel(next); onChange(next.toISOString()) }
   function pickDay(d: number) {
@@ -72,11 +73,11 @@ export default function DateTimePicker({ value, onChange }: { value: string | nu
             ))}
           </div>
         </>
-      ) : (
+      ) : mode === 'months' ? (
         <div className="min-h-[196px]">
           <div className="mb-2 flex items-center justify-between">
             <button onClick={() => setView(new Date(view.getFullYear() - 1, view.getMonth(), 1))} className={navBtn}>‹</button>
-            <div className="text-[13px] font-bold text-[#2e2c26]">{view.getFullYear()}</div>
+            <button onClick={() => setMode('years')} className="rounded-lg px-2.5 py-1 text-[13px] font-bold text-[#2e2c26] hover:bg-black/[0.06]">{view.getFullYear()}</button>
             <button onClick={() => setView(new Date(view.getFullYear() + 1, view.getMonth(), 1))} className={navBtn}>›</button>
           </div>
           <div className="grid grid-cols-3 gap-1.5">
@@ -85,6 +86,22 @@ export default function DateTimePicker({ value, onChange }: { value: string | nu
                 className={`rounded-lg py-2.5 text-[12px] transition-colors ${
                   i === view.getMonth() ? 'gloss font-bold' : 'text-[#3a3a3c] hover:bg-black/[0.06]'
                 }`}>{m}</button>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="min-h-[196px]">
+          <div className="mb-2 flex items-center justify-between">
+            <button onClick={() => setView(new Date(view.getFullYear() - 12, view.getMonth(), 1))} className={navBtn}>‹</button>
+            <div className="text-[13px] font-bold text-[#2e2c26]">{yearStart} – {yearStart + 11}</div>
+            <button onClick={() => setView(new Date(view.getFullYear() + 12, view.getMonth(), 1))} className={navBtn}>›</button>
+          </div>
+          <div className="grid grid-cols-3 gap-1.5">
+            {Array.from({ length: 12 }, (_, i) => yearStart + i).map((y) => (
+              <button key={y} onClick={() => { setView(new Date(y, view.getMonth(), 1)); setMode('months') }}
+                className={`rounded-lg py-2.5 text-[12px] transition-colors ${
+                  y === view.getFullYear() ? 'gloss font-bold' : 'text-[#3a3a3c] hover:bg-black/[0.06]'
+                }`}>{y}</button>
             ))}
           </div>
         </div>
