@@ -30,7 +30,7 @@ export default function Notes({ data }: { data: AppData }) {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="metal drag shrink-0 z-10 mx-3 mt-3 flex items-center justify-between rounded-[22px] px-8 pb-4 pt-5">
+      <header className="metal drag shrink-0 z-10 mx-3 flex items-center justify-between rounded-[26px] px-8 pb-4 pt-5">
         <h1 className="embossed text-[28px] font-bold tracking-tight">Notes</h1>
         <button onClick={newNote} className="gloss px-3.5 py-2 text-[13px] font-semibold">New note</button>
       </header>
