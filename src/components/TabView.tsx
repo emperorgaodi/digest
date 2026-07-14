@@ -19,8 +19,8 @@ export default function TabView({ data, tab }: { data: AppData; tab: Tab }) {
       <header className="metal drag shrink-0 z-10 mx-3 mt-3 rounded-[22px] px-8 pb-4 pt-5">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="engraved text-[28px] font-bold tracking-tight">{tab.name}</h1>
-            <p className="mt-1 text-[13px] text-[#6b7078]" style={{ textShadow: '0 1px 0 rgba(255,255,255,.6)' }}>
+            <h1 className="embossed text-[28px] font-bold tracking-tight">{tab.name}</h1>
+            <p className="mt-1 text-[13px] text-white/55" style={{ textShadow: "0 1px 2px rgba(0,0,0,.4)" }}>
               {intervalLabel(tab.intervalMinutes)} · {tab.lastFetched ? `updated ${timeAgo(tab.lastFetched)}` : 'never updated'}
               {tab.error && <span className="text-amber-700"> · error: {tab.error}</span>}
             </p>

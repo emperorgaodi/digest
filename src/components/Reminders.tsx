@@ -47,7 +47,7 @@ export default function Reminders({ data }: { data: AppData }) {
   return (
     <div className="flex h-full flex-col">
       <header className="metal drag shrink-0 z-10 mx-3 mt-3 rounded-[22px] px-8 pb-4 pt-5">
-        <h1 className="engraved text-[28px] font-bold tracking-tight">Reminders</h1>
+        <h1 className="embossed text-[28px] font-bold tracking-tight">Reminders</h1>
       </header>
 
       <div className="fade-scroll-edges flex-1 overflow-y-auto">

@@ -12,8 +12,8 @@ export default function Digest({ data, onOpenTab }: { data: AppData; onOpenTab: 
   return (
     <div className="flex h-full flex-col">
       <header className="metal drag shrink-0 z-10 mx-3 mt-3 rounded-[22px] px-8 pb-4 pt-5">
-        <p className="stamp text-[12px] font-bold uppercase tracking-wide">{today}</p>
-        <h1 className="engraved text-[28px] font-bold tracking-tight">Front Page</h1>
+        <p className="text-[12px] font-bold uppercase tracking-wide text-white/70">{today}</p>
+        <h1 className="embossed text-[28px] font-bold tracking-tight">Front Page</h1>
       </header>
 
       <div className="flex-1 overflow-y-auto fade-scroll-edges">
