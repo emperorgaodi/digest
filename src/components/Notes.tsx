@@ -57,7 +57,7 @@ export default function Notes({ data }: { data: AppData }) {
             <button onClick={newNote} className="gloss px-4 py-2 text-[14px] font-semibold">Create a new note</button>
           </div>
         ) : (
-          <div className="mx-auto max-w-2xl space-y-2">
+          <div className="mx-auto max-w-2xl space-y-2 pb-16">
             {live.map((n) => (
               <button key={n.id} onClick={() => setSelectedId(n.id)}
                 className="paper scroll-fade block w-full px-4 py-3 text-left">
