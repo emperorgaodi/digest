@@ -34,7 +34,7 @@ export default function Sidebar({
         <Row active={view === 'notes'} onClick={() => onSelect('notes')} label="Notes" badge={liveNotes} />
         <Row active={view === 'reminders'} onClick={() => onSelect('reminders')} label="Reminders" badge={activeReminders.length} alert={dueSoon > 0} />
 
-        <div className="mb-2 mt-6 px-2 text-[11px] font-bold uppercase tracking-wider text-[#c3cbef]" style={{ textShadow: '0 1px 3px rgba(0,0,0,.4)' }}>Topics</div>
+        <div className="mb-2 mt-4 border-t border-white/10 px-2 pt-4 text-[11px] font-bold uppercase tracking-wider text-[#c3cbef]" style={{ textShadow: '0 1px 3px rgba(0,0,0,.4)' }}>Topics</div>
         {data.tabs.map((t) => (
           <Row key={t.id} active={view === t.id} onClick={() => onSelect(t.id)} label={t.name}
             badge={unreadCount(data, t.id)} error={!!t.error} onEdit={() => setEditorFor(t.id)} />

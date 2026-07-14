@@ -22,7 +22,7 @@ export default function Notes({ data }: { data: AppData }) {
   }
 
   const prompt = (
-    <div className="flex h-full flex-col items-center justify-center gap-3 text-center opacity-60">
+    <div className="flex h-full w-full flex-1 flex-col items-center justify-center gap-3 text-center opacity-60">
       <p className="text-[15px] font-medium embossed">Select a note to read, or start a new one</p>
       <button onClick={newNote} className="gloss px-4 py-2 text-[14px] font-semibold">Create a new note</button>
     </div>
