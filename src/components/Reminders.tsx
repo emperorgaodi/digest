@@ -3,9 +3,34 @@ import type { AppData, Reminder } from '../../electron/types'
 import { api } from '../useDigest'
 import { formatDue, isOverdue, toLocalInput } from '../util'
 
+type Quick = 'none' | 'today' | 'tomorrow' | 'custom'
+
+// Turn a quick choice into an ISO due date (or null).
+function quickDue(q: Quick, custom: string): string | null {
+  if (q === 'none') return null
+  if (q === 'custom') return custom ? new Date(custom).toISOString() : null
+  const d = new Date()
+  if (q === 'today') {
+    d.setHours(18, 0, 0, 0)
+    if (d.getTime() <= Date.now()) { const n = new Date(); n.setHours(n.getHours() + 2, 0, 0, 0); return n.toISOString() }
+    return d.toISOString()
+  }
+  // tomorrow
+  d.setDate(d.getDate() + 1); d.setHours(9, 0, 0, 0)
+  return d.toISOString()
+}
+
+const CHIPS: { id: Quick; label: string }[] = [
+  { id: 'none', label: 'No date' },
+  { id: 'today', label: 'Later today' },
+  { id: 'tomorrow', label: 'Tomorrow' },
+  { id: 'custom', label: 'Pick…' },
+]
+
 export default function Reminders({ data }: { data: AppData }) {
   const [text, setText] = useState('')
-  const [due, setDue] = useState('')
+  const [quick, setQuick] = useState<Quick>('none')
+  const [custom, setCustom] = useState('')
 
   const active = data.reminders.filter((r) => !r.done)
   const done = data.reminders.filter((r) => r.done)
@@ -15,8 +40,8 @@ export default function Reminders({ data }: { data: AppData }) {
 
   async function add() {
     if (!text.trim()) return
-    await api.addReminder({ text, dueAt: due ? new Date(due).toISOString() : null })
-    setText(''); setDue('')
+    await api.addReminder({ text, dueAt: quickDue(quick, custom) })
+    setText(''); setQuick('none'); setCustom('')
   }
 
   return (
@@ -27,13 +52,27 @@ export default function Reminders({ data }: { data: AppData }) {
 
       <div className="fade-scroll-edges flex-1 overflow-y-auto">
         <div className="mx-auto max-w-2xl px-8 py-6">
-          {/* Add bar — a single frosted pill matching the reminder cards. */}
-          <div className="paper mb-7 flex items-center gap-2 px-2.5 py-2">
+          {/* Add card — text field + quick-schedule chips (native picker hidden until "Pick…"). */}
+          <div className="paper mb-7 p-3.5">
             <input value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && add()}
-              placeholder="Add a reminder…" className="min-w-0 flex-1 bg-transparent px-1 text-[15px] text-[#2e2c26] outline-none placeholder:text-[#a49e8e]" />
-            <input type="datetime-local" value={due} onChange={(e) => setDue(e.target.value)}
-              className="no-drag rounded-lg bg-black/[0.06] px-2 py-1.5 text-[12px] text-[#5b5548] outline-none" />
-            <button onClick={add} disabled={!text.trim()} className="gloss shrink-0 px-4 py-2 text-[14px] font-semibold disabled:opacity-40">Add</button>
+              placeholder="What do you need to remember?"
+              className="w-full bg-transparent px-1 text-[16px] font-medium text-[#2e2c26] outline-none placeholder:text-[#a49e8e]" />
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              {CHIPS.map((c) => (
+                <button key={c.id} onClick={() => setQuick(c.id)}
+                  className={`rounded-full px-3 py-1 text-[12px] font-semibold transition-colors ${
+                    quick === c.id ? 'gloss' : 'bg-black/[0.06] text-[#5b5548] hover:bg-black/[0.12]'
+                  }`}>
+                  {c.label}
+                </button>
+              ))}
+              {quick === 'custom' && (
+                <input type="datetime-local" value={custom} onChange={(e) => setCustom(e.target.value)} autoFocus
+                  className="rounded-lg bg-black/[0.06] px-2 py-1 text-[12px] text-[#5b5548] outline-none [color-scheme:light]" />
+              )}
+              <button onClick={add} disabled={!text.trim()}
+                className="gloss ml-auto px-5 py-1.5 text-[13px] font-semibold disabled:opacity-40">Add</button>
+            </div>
           </div>
 
           <Group title="Overdue" stamp list={overdue} />
@@ -82,7 +121,7 @@ function Item({ r }: { r: Reminder }) {
         <div className="flex flex-1 items-center gap-2">
           <input autoFocus value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
             className="flex-1 rounded-lg bg-black/[0.06] px-2 py-1.5 text-[14px] text-[#2e2c26] outline-none" />
-          <input type="datetime-local" value={due} onChange={(e) => setDue(e.target.value)} className="rounded-lg bg-black/[0.06] px-2 py-1.5 text-[12px]" />
+          <input type="datetime-local" value={due} onChange={(e) => setDue(e.target.value)} className="rounded-lg bg-black/[0.06] px-2 py-1.5 text-[12px] [color-scheme:light]" />
           <button onClick={saveEdit} className="text-[13px] font-semibold text-accent">Save</button>
         </div>
       ) : (
