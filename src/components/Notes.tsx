@@ -21,20 +21,22 @@ export default function Notes({ data }: { data: AppData }) {
     setSelectedId(note.id)
   }
 
-  // ---- Editor view (full width) ----
+  // ---- Editor view — text on the app's glass background (no white panel) ----
   if (selected) {
     return (
       <div className="flex h-full flex-col">
-        <header className="metal drag shrink-0 z-10 flex items-center rounded-[26px] px-5 pb-4 pt-5">
+        <header className="metal drag shrink-0 z-10 flex items-center justify-between rounded-[26px] px-4 py-3">
           <button onClick={() => setSelectedId(null)}
-            className="no-drag flex items-center gap-1.5 rounded-xl px-3 py-2 text-[14px] font-semibold embossed transition-colors hover:bg-white/10">
-            <span className="text-[16px] leading-none">‹</span> Notes
+            className="no-drag flex items-center gap-1 rounded-xl px-3 py-2 text-[14px] font-semibold embossed transition-colors hover:bg-white/10">
+            <span className="text-[17px] leading-none">‹</span> Notes
+          </button>
+          <button onClick={() => { api.deleteNote(selected.id); setSelectedId(null) }}
+            className="no-drag rounded-xl px-3 py-2 text-[13px] font-medium text-white/60 transition-colors hover:bg-red-500/20 hover:text-red-300">
+            Delete
           </button>
         </header>
-        <div className="flex-1 overflow-hidden p-3">
-          <div className="paper h-full overflow-hidden">
-            <Editor key={selected.id} note={selected} onDeleted={() => setSelectedId(null)} />
-          </div>
+        <div className="flex-1 overflow-hidden">
+          <Editor key={selected.id} note={selected} />
         </div>
       </div>
     )
@@ -89,8 +91,8 @@ export default function Notes({ data }: { data: AppData }) {
   )
 }
 
-// Autosaving editor — local draft, debounced persist, flush on blur.
-function Editor({ note, onDeleted }: { note: Note; onDeleted: () => void }) {
+// Autosaving editor — light text on the dark glass background, autosaves on edit.
+function Editor({ note }: { note: Note }) {
   const [title, setTitle] = useState(note.title)
   const [body, setBody] = useState(note.body)
   const timer = useRef<ReturnType<typeof setTimeout>>()
@@ -103,15 +105,12 @@ function Editor({ note, onDeleted }: { note: Note; onDeleted: () => void }) {
   useEffect(() => () => clearTimeout(timer.current), [])
 
   return (
-    <div className="mx-auto flex h-full max-w-2xl flex-col px-8 py-6">
-      <div className="mb-2 flex items-center gap-3">
-        <input value={title} onChange={(e) => { setTitle(e.target.value); scheduleSave({ title: e.target.value, body }) }} onBlur={flush}
-          autoFocus placeholder="Title" className="flex-1 bg-transparent text-[24px] font-bold tracking-tight text-[#2e2c26] outline-none placeholder:text-[#b8b2a4]" />
-        <button onClick={() => { api.deleteNote(note.id); onDeleted() }} className="btn-metal shrink-0 px-2.5 py-1.5 text-[12px] font-medium">Delete</button>
-      </div>
-      <div className="mb-3 text-[12px] text-[#a49e8e]">Edited {timeAgo(note.updatedAt)} · saved automatically</div>
+    <div className="mx-auto flex h-full max-w-2xl flex-col px-8 pb-4 pt-6">
+      <input value={title} onChange={(e) => { setTitle(e.target.value); scheduleSave({ title: e.target.value, body }) }} onBlur={flush}
+        autoFocus placeholder="Title" className="bg-transparent text-[26px] font-bold tracking-tight text-white outline-none placeholder:text-white/25" />
+      <div className="mb-4 mt-1.5 text-[12px] text-white/40">Edited {timeAgo(note.updatedAt)} · saved automatically</div>
       <textarea value={body} onChange={(e) => { setBody(e.target.value); scheduleSave({ title, body: e.target.value }) }} onBlur={flush}
-        placeholder="Start writing…" className="flex-1 bg-transparent text-[15px] leading-relaxed text-[#3a3a3c] outline-none placeholder:text-[#b8b2a4]" />
+        placeholder="Start writing…" className="flex-1 resize-none bg-transparent text-[15px] leading-relaxed text-white/85 outline-none placeholder:text-white/25" />
     </div>
   )
 }
