@@ -63,7 +63,7 @@ export default function Clock() {
             <div className="text-[64px] font-bold leading-none tracking-tight text-[#2e2c26] tabular-nums">
               {now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
             </div>
-            <div className="mt-3 text-[15px] font-medium text-[#8a8474]">
+            <div className="mt-3 text-[15px] font-semibold text-[#5b5548]">
               {now.toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
             </div>
           </div>

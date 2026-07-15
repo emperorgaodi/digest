@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { AppData } from '../../electron/types'
 import { api } from '../useDigest'
 import { isOverdue, formatDue, timeAgo } from '../util'
@@ -9,6 +9,12 @@ const TABS: WTab[] = ['news', 'reminders', 'notes']
 
 export default function Widget({ data }: { data: AppData | null }) {
   const [tab, setTab] = useState<WTab>('news')
+  const [now, setNow] = useState(() => new Date())
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 1000)
+    return () => clearInterval(id)
+  }, [])
 
   const items = data
     ? [...data.items].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt)).slice(0, 25)
@@ -28,7 +34,11 @@ export default function Widget({ data }: { data: AppData | null }) {
         </div>
         <header className="flex items-center gap-2 px-4 pb-2 pt-2">
           <span className="embossed text-[15px] font-bold tracking-tight">Digest</span>
-          <button onClick={() => api.toggleWidget()} className="btn-metal no-drag ml-auto px-2.5 py-1 text-[12px] font-medium" title="Open full app">Expand</button>
+          <span className="embossed ml-auto text-[12px] font-semibold tabular-nums">
+            {now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            <span className="ml-1.5 font-medium opacity-75">{now.toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short' })}</span>
+          </span>
+          <button onClick={() => api.toggleWidget()} className="btn-metal no-drag px-2.5 py-1 text-[12px] font-medium" title="Open full app">Expand</button>
         </header>
       </div>
 
