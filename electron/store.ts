@@ -1,6 +1,7 @@
 import { app } from 'electron'
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
+import { DEFAULT_WIDGET_TILES } from './types'
 import type { AppData } from './types'
 
 const DEFAULT_DATA: AppData = {
@@ -12,6 +13,8 @@ const DEFAULT_DATA: AppData = {
   settings: {
     region: { hl: 'en-SG', gl: 'SG', ceid: 'SG:en' },
     accent: '#0A84FF',
+    worldClocks: [],
+    widgetTiles: DEFAULT_WIDGET_TILES,
   },
 }
 

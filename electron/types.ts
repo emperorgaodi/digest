@@ -48,9 +48,25 @@ export interface Region {
   ceid: string // combined, e.g. "SG:en"
 }
 
+export type WidgetTileId = 'clock' | 'news' | 'reminders' | 'notes'
+
+export interface WidgetTile {
+  id: WidgetTileId
+  enabled: boolean
+}
+
+export const DEFAULT_WIDGET_TILES: WidgetTile[] = [
+  { id: 'clock', enabled: true },
+  { id: 'news', enabled: true },
+  { id: 'reminders', enabled: true },
+  { id: 'notes', enabled: true },
+]
+
 export interface Settings {
   region: Region
   accent: string
+  worldClocks: string[]    // IANA time zone ids shown in the world clock
+  widgetTiles: WidgetTile[] // widget tile order + visibility
 }
 
 export interface AppData {

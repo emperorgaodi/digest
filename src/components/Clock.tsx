@@ -1,22 +1,27 @@
 import { useEffect, useState } from 'react'
+import type { AppData } from '../../electron/types'
+import { api } from '../useDigest'
 
-// Timer lives at module scope so navigating to another view (which unmounts
-// this component) doesn't kill the countdown or the finished notification.
-let timerEnd: number | null = null
-let timerTimeout: ReturnType<typeof setTimeout> | undefined
+// Timers live at module scope so navigating to another view (which unmounts
+// this component) doesn't kill a countdown or its finished notification.
+type ActiveTimer = { id: string; name: string; end: number }
+let running: ActiveTimer[] = []
+const timeouts = new Map<string, ReturnType<typeof setTimeout>>()
 
-function startTimer(minutes: number) {
-  clearTimeout(timerTimeout)
-  timerEnd = Date.now() + minutes * 60_000
-  timerTimeout = setTimeout(() => {
-    timerEnd = null
-    new Notification('Timer finished', { body: `${minutes} minute timer is up.` })
-  }, minutes * 60_000)
+function startTimer(name: string, totalSeconds: number) {
+  const id = crypto.randomUUID()
+  running = [...running, { id, name, end: Date.now() + totalSeconds * 1000 }]
+  timeouts.set(id, setTimeout(() => {
+    running = running.filter((t) => t.id !== id)
+    timeouts.delete(id)
+    new Notification(name || 'Timer finished', { body: name ? `${name} is done.` : 'Time is up.' })
+  }, totalSeconds * 1000))
 }
 
-function cancelTimer() {
-  clearTimeout(timerTimeout)
-  timerEnd = null
+function cancelTimer(id: string) {
+  clearTimeout(timeouts.get(id))
+  timeouts.delete(id)
+  running = running.filter((t) => t.id !== id)
 }
 
 function pad(n: number) {
@@ -30,24 +35,39 @@ function formatRemaining(ms: number) {
   return h > 0 ? `${h}:${pad(m)}:${pad(s % 60)}` : `${m}:${pad(s % 60)}`
 }
 
-const PRESETS = [5, 10, 15, 25, 60]
+export function zoneCity(zone: string): string {
+  return (zone.split('/').pop() || zone).replace(/_/g, ' ')
+}
 
-export default function Clock() {
+const PRESETS = [5, 10, 15, 25, 60]
+const ALL_ZONES: string[] =
+  (Intl as unknown as { supportedValuesOf?: (key: 'timeZone') => string[] }).supportedValuesOf?.('timeZone') ?? []
+
+export default function Clock({ data }: { data: AppData }) {
   const [now, setNow] = useState(() => new Date())
-  const [customMin, setCustomMin] = useState('')
+  const [name, setName] = useState('')
+  const [hrs, setHrs] = useState('')
+  const [min, setMin] = useState('')
+  const [sec, setSec] = useState('')
+  const [zonePick, setZonePick] = useState('')
 
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 250)
     return () => clearInterval(id)
   }, [])
 
-  const remaining = timerEnd ? timerEnd - now.getTime() : null
+  const totalSeconds = (Number(hrs) || 0) * 3600 + (Number(min) || 0) * 60 + (Number(sec) || 0)
+  const zones = data.settings.worldClocks
 
-  function startCustom() {
-    const min = Number(customMin)
-    if (!Number.isFinite(min) || min <= 0) return
-    startTimer(min)
-    setCustomMin('')
+  function start() {
+    if (totalSeconds <= 0) return
+    startTimer(name.trim(), totalSeconds)
+    setName(''); setHrs(''); setMin(''); setSec('')
+  }
+
+  function addZone() {
+    if (zonePick && !zones.includes(zonePick)) api.updateSettings({ worldClocks: [...zones, zonePick] })
+    setZonePick('')
   }
 
   return (
@@ -68,40 +88,87 @@ export default function Clock() {
             </div>
           </div>
 
-          {/* Timer card */}
-          <div className="paper p-5">
-            <h2 className="engraved mb-3 text-[12px] font-bold uppercase tracking-wider">Timer</h2>
-
-            {remaining !== null ? (
-              <div className="text-center">
-                <div className="text-[52px] font-bold leading-none tracking-tight text-[#2e2c26] tabular-nums">
-                  {formatRemaining(remaining)}
-                </div>
-                <button onClick={cancelTimer} className="btn-metal mt-5 px-5 py-1.5 text-[13px] font-semibold">
-                  Cancel
-                </button>
-              </div>
-            ) : (
-              <div className="flex flex-wrap items-center gap-2">
-                {PRESETS.map((min) => (
-                  <button key={min} onClick={() => startTimer(min)}
-                    className="rounded-full bg-black/[0.06] px-3 py-1 text-[12px] font-semibold text-[#5b5548] transition-colors hover:bg-black/[0.12]">
-                    {min} min
-                  </button>
+          {/* World clock card */}
+          <div className="paper mb-7 p-5">
+            <h2 className="engraved mb-3 text-[12px] font-bold uppercase tracking-wider">World clock</h2>
+            {zones.length > 0 && (
+              <div className="mb-3 space-y-2">
+                {zones.map((z) => (
+                  <div key={z} className="group flex items-baseline gap-3">
+                    <span className="text-[15px] font-medium text-[#2e2c26]">{zoneCity(z)}</span>
+                    <span className="text-[12px] text-[#8a8474]">
+                      {now.toLocaleDateString([], { weekday: 'short', timeZone: z })}
+                    </span>
+                    <span className="ml-auto text-[17px] font-semibold text-[#2e2c26] tabular-nums">
+                      {now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: z })}
+                    </span>
+                    <button onClick={() => api.updateSettings({ worldClocks: zones.filter((x) => x !== z) })}
+                      className="text-[#b3ac9c] opacity-0 transition-opacity hover:text-red-600 group-hover:opacity-100" title="Remove">x</button>
+                  </div>
                 ))}
-                <div className="ml-auto flex items-center gap-2">
-                  <input value={customMin} onChange={(e) => setCustomMin(e.target.value.replace(/[^0-9]/g, ''))}
-                    onKeyDown={(e) => e.key === 'Enter' && startCustom()}
-                    placeholder="min" inputMode="numeric"
-                    className="w-16 rounded-lg bg-black/[0.06] px-2 py-1.5 text-center text-[13px] text-[#2e2c26] outline-none placeholder:text-[#7c766a]" />
-                  <button onClick={startCustom} disabled={!customMin}
-                    className="gloss px-4 py-1.5 text-[13px] font-semibold disabled:opacity-40">Start</button>
-                </div>
               </div>
             )}
+            <div className="flex items-center gap-2">
+              <select value={zonePick} onChange={(e) => setZonePick(e.target.value)}
+                className="flex-1 rounded-lg bg-black/[0.06] px-2 py-1.5 text-[13px] text-[#2e2c26] outline-none">
+                <option value="">Choose a time zone…</option>
+                {ALL_ZONES.map((z) => <option key={z} value={z}>{z.replace(/_/g, ' ')}</option>)}
+              </select>
+              <button onClick={addZone} disabled={!zonePick}
+                className="gloss px-4 py-1.5 text-[13px] font-semibold disabled:opacity-40">Add</button>
+            </div>
+          </div>
+
+          {/* Timer card */}
+          <div className="paper p-5">
+            <h2 className="engraved mb-3 text-[12px] font-bold uppercase tracking-wider">Timers</h2>
+
+            {running.length > 0 && (
+              <div className="mb-4 space-y-2">
+                {running.map((t) => (
+                  <div key={t.id} className="flex items-center gap-3 rounded-xl bg-black/[0.06] px-3.5 py-2.5">
+                    <span className="min-w-0 flex-1 truncate text-[14px] font-medium text-[#2e2c26]">{t.name || 'Timer'}</span>
+                    <span className="text-[20px] font-bold text-[#2e2c26] tabular-nums">{formatRemaining(t.end - now.getTime())}</span>
+                    <button onClick={() => cancelTimer(t.id)} className="btn-metal px-3 py-1 text-[12px] font-semibold">Cancel</button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <input value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && start()}
+              placeholder="Timer name (optional)"
+              className="mb-3 w-full rounded-lg bg-black/[0.06] px-3 py-2 text-[14px] text-[#2e2c26] outline-none placeholder:text-[#7c766a]" />
+
+            <div className="flex flex-wrap items-center gap-2">
+              <DurField label="hr" value={hrs} onChange={setHrs} />
+              <DurField label="min" value={min} onChange={setMin} />
+              <DurField label="sec" value={sec} onChange={setSec} />
+              <button onClick={start} disabled={totalSeconds <= 0}
+                className="gloss ml-auto px-5 py-1.5 text-[13px] font-semibold disabled:opacity-40">Start</button>
+            </div>
+
+            <div className="mt-3 flex flex-wrap gap-2">
+              {PRESETS.map((m) => (
+                <button key={m} onClick={() => { setHrs(''); setMin(String(m)); setSec('') }}
+                  className="rounded-full bg-black/[0.06] px-3 py-1 text-[12px] font-semibold text-[#5b5548] transition-colors hover:bg-black/[0.12]">
+                  {m} min
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
     </div>
+  )
+}
+
+function DurField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return (
+    <label className="flex items-center gap-1.5">
+      <input value={value} onChange={(e) => onChange(e.target.value.replace(/[^0-9]/g, ''))}
+        inputMode="numeric" placeholder="0"
+        className="w-14 rounded-lg bg-black/[0.06] px-2 py-1.5 text-center text-[14px] text-[#2e2c26] outline-none placeholder:text-[#7c766a] tabular-nums" />
+      <span className="text-[12px] font-semibold text-[#5b5548]">{label}</span>
+    </label>
   )
 }

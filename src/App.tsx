@@ -32,7 +32,7 @@ export default function App() {
         {view === 'digest' && <Digest data={data} onOpenTab={setView} />}
         {view === 'notes' && <Notes data={data} />}
         {view === 'reminders' && <Reminders data={data} />}
-        {view === 'clock' && <Clock />}
+        {view === 'clock' && <Clock data={data} />}
         {tab && <TabView data={data} tab={tab} />}
       </main>
     </div>
