@@ -1,67 +1,79 @@
-# Digest — personal newsletter aggregator
+# Digest
 
-Fully local. No accounts, no servers beyond fetching public RSS. Your data is a
-single readable JSON file you can back up.
+A local-first desktop app that pulls keyword-driven news on background schedules and keeps your notes, reminders, world clock and timers in one place. No accounts, no backend, no API keys. Everything lives in a single JSON file you can back up.
 
-## Run it
+Built with Electron, React, TypeScript and Tailwind, with a hand-made "liquid glass" design system.
+
+![Front Page](docs/screenshots/front-page.png)
+
+## Download
+
+Grab the Windows installer from the [latest release](https://github.com/emperorgaodi/digest/releases/latest) (`Digest Setup 1.0.0.exe`).
+
+The installer is unsigned, so Windows SmartScreen will warn you the first time. Click **More info**, then **Run anyway**. If you would rather not run an unsigned binary, build it yourself (see below).
+
+## Features
+
+- **Topic tabs** - a name plus keywords builds a Google News RSS search. Each tab refreshes on its own schedule (hourly, every 6 hours, or daily), with deduplication and read/unread state that survives refreshes and restarts.
+- **Front Page** - the newest items from every topic merged into one feed.
+- **Notes** - autosaved as you type, with soft delete and restore.
+- **Reminders** - quick presets or a custom-built date/time picker; due reminders fire a native desktop notification.
+- **Clock** - live clock, a world clock for any time zones you add, and multiple named countdown timers (hours, minutes, seconds) that notify when they finish.
+- **Widget** - a frameless always-on-top mini window. Its Clock, News, Reminders and Notes tiles can be dragged to reorder and hidden or shown.
+- **Themeable** - nine accent colours that apply live across the whole UI.
+
+| Topic feed | Reminders |
+| --- | --- |
+| ![Topic](docs/screenshots/topic.png) | ![Reminders](docs/screenshots/reminders.png) |
+
+| Clock and timers | Widget |
+| --- | --- |
+| ![Clock](docs/screenshots/clock.png) | ![Widget](docs/screenshots/widget.png) |
+
+## Run from source
 
 ```bash
-npm install      # first time only
-npm run dev      # launches the app (Vite + Electron)
+npm install
+npm run dev        # launches the app (Vite + Electron)
 ```
 
-## Build a standalone installer (so it runs without the terminal)
+## Build the installer
 
 ```bash
-npm run package  # outputs a Windows installer under release/
+npm run package    # writes the Windows installer to dist/
 ```
-
-Install it and launch "Digest" from the Start menu like any app.
 
 ## Where your data lives
 
-`%APPDATA%\digest\data.json` — tabs, settings, saved items, and read/unread
-state. Plain JSON. Copy it anywhere to back up; delete it to start fresh.
-"Open data folder" in the sidebar jumps straight there.
+`%APPDATA%\digest\data.json` holds your topics, settings, items, notes and reminders as plain JSON. Copy it to back up, delete it to start fresh. "Open data folder" in the Appearance menu jumps straight to it.
 
 ## How it works
 
-- **Tabs** = a name + keywords. Keywords build a Google News RSS search
-  (`news.google.com/rss/search`), region-tuned to Singapore/English (stored in data.json `settings.region`)
-- **Scheduler** lives in the Electron main process: one timer per tab, re-armed
-  on every change, so editing a tab's frequency takes effect on the next tick —
-  no restart. (`electron/scheduler.ts`)
-- **Digest / tab / widget** are three views over one store. The main process is
-  the single writer and pushes full state to every open window on each change,
-  so marking an item read anywhere updates everywhere.
-- **Widget** is a frameless always-on-top window (`?widget`), toggled from the
-  sidebar; "Expand ↗" swaps back to the full app.
-- **Clicking a headline** opens the article in an in-app reader window and marks
-  it read.
+- **Two processes.** The Electron main process owns `data.json`, all RSS fetching, the per-tab schedulers and reminder checks. The React renderer is a pure view that talks to main through a small `contextBridge` API (`window.digest`) with context isolation on.
+- **One store, many views.** Main mutates `data.json`, then pushes the full state to every open window. The Front Page, topic views and widget are live projections of the same data, so marking something read anywhere updates everywhere.
+- **Safe persistence.** Writes go to a temp file and are renamed into place, so a crash mid-write cannot corrupt your data. Older data files gain new fields through default-merging on load.
+- **Live scheduling.** One `setTimeout` per tab, re-armed on every change, so editing a tab's interval takes effect without a restart.
+- **Fetching in main.** Feeds are fetched in the main process, so there is no CORS problem and no key to manage.
 
 ## Code map
 
 ```
 electron/
-  main.ts       windows, IPC, fetch→merge→persist→broadcast loop
-  store.ts      atomic JSON read/write (data.json)
-  feeds.ts      Google News RSS URL + parse
+  main.ts       windows, IPC, fetch -> merge -> persist -> broadcast loop
+  store.ts      atomic JSON read/write, default-merge migration
+  feeds.ts      Google News RSS URL and parsing
   scheduler.ts  per-tab timers, live reschedule
   types.ts      the AppData shape persisted to disk
+  preload.ts    the window.digest API exposed to the renderer
 src/
   App.tsx       app vs widget routing
-  components/   Sidebar, Digest, TabView, TabEditor, Widget, ArticleCard
-  useDigest.ts  subscribes to main-process state pushes
+  index.css     the glass design system
+  components/   Sidebar, Digest, TabView, Notes, Reminders, Clock, Widget,
+                DateTimePicker, ArticleCard, TabEditor
 ```
 
-## Notes & Reminders
+## Limitations
 
-The sidebar has three areas that all share the same `data.json`:
-
-- **Front Page / Topics** — the news digest.
-- **Notes** — autosaved on every keystroke. Closing a note never loses it;
-  reopen any note from the list. Deleting is a soft delete → "Recently deleted"
-  lets you Restore (or delete forever).
-- **Reminders** — add text with an optional date/time. When one comes due the
-  app fires a native Windows notification (checked every 30s, even in widget
-  mode). The widget shows your upcoming reminders above the headlines.
+- Windows is the tested platform. The code is cross-platform, but macOS builds have not been tried.
+- No automated tests yet.
+- Timers do not survive an app restart.
