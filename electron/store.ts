@@ -15,6 +15,7 @@ const DEFAULT_DATA: AppData = {
     accent: '#0A84FF',
     worldClocks: [],
     widgetTiles: DEFAULT_WIDGET_TILES,
+    phoneLink: false,
   },
 }
 

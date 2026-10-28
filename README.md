@@ -8,7 +8,7 @@ Built with Electron, React, TypeScript and Tailwind, with a hand-made "liquid gl
 
 ## Download
 
-Grab the Windows installer from the [latest release](https://github.com/emperorgaodi/digest/releases/latest) (`Digest Setup 1.0.0.exe`).
+Grab the Windows installer from the [latest release](https://github.com/emperorgaodi/digest/releases/latest) (`Digest.Setup.1.0.0.exe`).
 
 The installer is unsigned, so Windows SmartScreen will warn you the first time. Click **More info**, then **Run anyway**. If you would rather not run an unsigned binary, build it yourself (see below).
 
@@ -29,6 +29,10 @@ The installer is unsigned, so Windows SmartScreen will warn you the first time. 
 | Clock and timers | Widget |
 | --- | --- |
 | ![Clock](docs/screenshots/clock.png) | ![Widget](docs/screenshots/widget.png) |
+
+## On your phone
+
+Turn on **Phone link** in the sidebar, scan the QR code, and the same Digest opens on your Android phone or iPhone, in sync with the desktop. It talks to your computer directly over your Wi-Fi (or a private Tailscale network); nothing goes through a cloud server. Paired phones can be revoked at any time. See [docs/phone-setup.md](docs/phone-setup.md). An Android home-screen widget is in [`android/`](android/README.md) (not yet built) and an iOS widget is specified in [`ios/`](ios/README.md).
 
 ## Run from source
 

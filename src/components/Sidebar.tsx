@@ -4,12 +4,14 @@ import { api } from '../useDigest'
 import { unreadCount, isOverdue } from '../util'
 import { THEMES } from '../themes'
 import TabEditor from './TabEditor'
+import PhoneLink from './PhoneLink'
 
 export default function Sidebar({
   data, view, onSelect,
 }: { data: AppData; view: string; onSelect: (v: string) => void }) {
   const [editorFor, setEditorFor] = useState<string | null>(null)
   const [showTheme, setShowTheme] = useState(false)
+  const [showPhone, setShowPhone] = useState(false)
   const editingTab = editorFor && editorFor !== 'new' ? data.tabs.find((t) => t.id === editorFor) ?? null : null
 
   const totalUnread = data.items.filter((i) => !i.read).length
@@ -63,10 +65,12 @@ export default function Sidebar({
 
         <FootBtn onClick={() => setEditorFor('new')} label="New topic" />
         <FootBtn onClick={() => api.toggleWidget()} label="Widget mode" />
+        <FootBtn onClick={() => setShowPhone(true)} label="Phone link" />
         <FootBtn onClick={() => setShowTheme((s) => !s)} label="Appearance" swatch={accent} />
       </div>
 
       {editorFor && <TabEditor tab={editingTab} onClose={() => setEditorFor(null)} />}
+      {showPhone && <PhoneLink data={data} onClose={() => setShowPhone(false)} />}
     </aside>
   )
 }

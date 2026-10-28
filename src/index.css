@@ -142,6 +142,19 @@ html.widget, html.widget body, html.widget #root { background: transparent !impo
 html.widget .leather { background: linear-gradient(135deg, rgba(30,34,62,0.93), rgba(16,20,40,0.89)) !important; }
 html.widget .paper { background: linear-gradient(135deg, rgba(255,255,255,0.93), rgba(255,255,255,0.85)) !important; }
 
+/* ---- Phone client (html.phone, set in main.tsx when there is no Electron preload) ----
+   Overrides only: the desktop markup is reused as-is, so tighten the generous desktop
+   gutters, make hover-only controls visible on touch, and respect the notch/home bar. */
+html.phone, html.phone body, html.phone #root { height: 100dvh; }
+html.phone body { padding-top: env(safe-area-inset-top); -webkit-tap-highlight-color: transparent; }
+html.phone .px-8 { padding-left: 1rem; padding-right: 1rem; }
+html.phone header.metal { padding-top: 0.9rem; padding-bottom: 0.75rem; }
+html.phone .text-\[64px\] { font-size: 44px; }
+html.phone .text-\[52px\] { font-size: 38px; }
+html.phone .opacity-0 { opacity: 1; }
+html.phone input, html.phone textarea, html.phone select { font-size: 16px; } /* stops iOS zoom-on-focus */
+html.phone button { touch-action: manipulation; }
+
 /* Native-app feel: Ctrl+A shouldn't select the whole UI. Keep it in fields. */
 * { -webkit-user-select: none; user-select: none; }
 input, textarea, [contenteditable="true"] { -webkit-user-select: text; user-select: text; }

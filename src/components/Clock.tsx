@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { AppData } from '../../electron/types'
 import { api } from '../useDigest'
+import { notify } from '../notify'
 
 // Timers live at module scope so navigating to another view (which unmounts
 // this component) doesn't kill a countdown or its finished notification.
@@ -14,7 +15,7 @@ function startTimer(name: string, totalSeconds: number) {
   timeouts.set(id, setTimeout(() => {
     running = running.filter((t) => t.id !== id)
     timeouts.delete(id)
-    new Notification(name || 'Timer finished', { body: name ? `${name} is done.` : 'Time is up.' })
+    void notify(name || 'Timer finished', name ? `${name} is done.` : 'Time is up.')
   }, totalSeconds * 1000))
 }
 
@@ -110,7 +111,7 @@ export default function Clock({ data }: { data: AppData }) {
             )}
             <div className="flex items-center gap-2">
               <select value={zonePick} onChange={(e) => setZonePick(e.target.value)}
-                className="flex-1 rounded-lg bg-black/[0.06] px-2 py-1.5 text-[13px] text-[#2e2c26] outline-none">
+                className="min-w-0 flex-1 rounded-lg bg-black/[0.06] px-2 py-1.5 text-[13px] text-[#2e2c26] outline-none">
                 <option value="">Choose a time zone…</option>
                 {ALL_ZONES.map((z) => <option key={z} value={z}>{z.replace(/_/g, ' ')}</option>)}
               </select>

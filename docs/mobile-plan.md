@@ -42,6 +42,23 @@ Each stage is one GitHub issue (milestone "Phone link") and one or more commits.
 9. **iOS home-screen widget.** WidgetKit extension reading the same API. Needs a Mac with Xcode and an Apple developer account, so it cannot be built on the current Windows machine. Documented now, built when a Mac is available.
 10. **Remote access (optional).** Use away from home Wi-Fi via a private network such as Tailscale, or a relay. Out of scope for the first version.
 
+## Status
+
+| Stage | Issue | State |
+| --- | --- | --- |
+| 1 Handlers | #1 | Done, checked in the running app |
+| 2 Server | #2 | Done, 28 automated end-to-end checks pass |
+| 3 Pairing and auth | #3 | Done, covered by the same checks (single-use code, revoke, no secrets in state) |
+| 4 Desktop panel | #4 | Done, checked visually |
+| 5 Phone client | #5 | Done, checked in a phone-sized browser; not yet tried on a real phone |
+| 6 PWA | #10 | Code done. Install and offline need HTTPS, see [phone-https.md](phone-https.md); HTTPS path untested |
+| 7 Phone notifications | #6 | Done within browser limits, not tested on a real phone |
+| 8 Android widget | #7 | Source written, never compiled (no Android SDK here) |
+| 9 iOS widget | #8 | Specification only, needs a Mac |
+| 10 Away from home | #9 | Decision recorded (Tailscale), see [phone-https.md](phone-https.md) |
+
+Issue numbers differ from stage numbers after Stage 5 because one issue had to be re-created. Setup steps for the user: [phone-setup.md](phone-setup.md).
+
 ## Security model
 
 - The server is off by default and only binds when the user enables Phone link.

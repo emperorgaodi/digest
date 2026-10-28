@@ -29,7 +29,13 @@ export interface DigestApi {
   minimizeWindow: () => Promise<void>
   toggleMaximize: () => Promise<void>
   closeWindow: () => Promise<void>
+  // Phone link (desktop only)
+  phoneStatus: () => Promise<{ running: boolean; port: number; urls: string[] }>
+  phoneNewCode: () => Promise<{ code: string; expiresAt: string }>
+  phoneDevices: () => Promise<{ id: string; name: string; createdAt: string; lastSeen: string | null }[]>
+  phoneRevoke: (id: string) => Promise<void>
   mode: 'app' | 'widget'
+  platform: 'desktop' | 'phone'
 }
 
 const api: DigestApi = {
@@ -60,7 +66,12 @@ const api: DigestApi = {
   minimizeWindow: () => ipcRenderer.invoke('window:minimize'),
   toggleMaximize: () => ipcRenderer.invoke('window:maximize'),
   closeWindow: () => ipcRenderer.invoke('window:close'),
+  phoneStatus: () => ipcRenderer.invoke('phone:status'),
+  phoneNewCode: () => ipcRenderer.invoke('phone:newCode'),
+  phoneDevices: () => ipcRenderer.invoke('phone:devices'),
+  phoneRevoke: (id) => ipcRenderer.invoke('phone:revoke', id),
   mode: new URLSearchParams(location.search).has('widget') ? 'widget' : 'app',
+  platform: 'desktop',
 }
 
 contextBridge.exposeInMainWorld('digest', api)

@@ -63,7 +63,9 @@ export default function Widget({ data }: { data: AppData | null }) {
           <button onClick={() => setEditMode((e) => !e)}
             className={`no-drag px-2.5 py-1 text-[12px] font-medium ${editMode ? 'gloss rounded-[9px]' : 'btn-metal'}`}
             title="Rearrange tiles">{editMode ? 'Done' : 'Tiles'}</button>
-          <button onClick={() => api.toggleWidget()} className="btn-metal no-drag px-2.5 py-1 text-[12px] font-medium" title="Open full app">Expand</button>
+          {api.platform === 'desktop' && (
+            <button onClick={() => api.toggleWidget()} className="btn-metal no-drag px-2.5 py-1 text-[12px] font-medium" title="Open full app">Expand</button>
+          )}
         </header>
       </div>
 

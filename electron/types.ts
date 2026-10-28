@@ -67,6 +67,7 @@ export interface Settings {
   accent: string
   worldClocks: string[]    // IANA time zone ids shown in the world clock
   widgetTiles: WidgetTile[] // widget tile order + visibility
+  phoneLink: boolean       // true = LAN server for the phone client is running
 }
 
 export interface AppData {

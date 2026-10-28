@@ -1,10 +1,14 @@
 import { app, BrowserWindow, ipcMain, shell, Notification } from 'electron'
 import path from 'node:path'
+import { readFile } from 'node:fs/promises'
 import { load, save, dataFilePath } from './store'
 import { fetchTab } from './feeds'
 import { rescheduleAll, clearAll } from './scheduler'
 import { createHandlers } from './handlers'
+import * as phone from './server'
+import { newPairingCode, listDevices, revokeDevice } from './devices'
 import { MAX_ITEMS_PER_TAB } from './types'
+import type { AppData } from './types'
 
 const DEV_URL = process.env.VITE_DEV_SERVER_URL
 const INDEX = path.join(__dirname, '../dist/index.html')
@@ -41,9 +45,29 @@ function createWidgetWindow() {
   widgetWin.on('closed', () => (widgetWin = null))
 }
 
+// HTTPS is opt-in: drop cert.pem, key.pem and host.txt (the cert's DNS name) into
+// <userData>/tls. See docs/phone-https.md.
+async function readTls() {
+  const dir = path.join(app.getPath('userData'), 'tls')
+  try {
+    const [cert, key, host] = await Promise.all(['cert.pem', 'key.pem', 'host.txt'].map((f) => readFile(path.join(dir, f), 'utf-8')))
+    return { cert, key, host: host.trim() }
+  } catch {
+    return undefined
+  }
+}
+
+// Start/stop the phone server to match settings.phoneLink and push state to phones.
+async function syncPhone(data: AppData) {
+  if (!data.settings.phoneLink) { await phone.stop(); return }
+  try { await phone.start(handlers, path.join(__dirname, '../dist'), await readTls()) } catch { /* no free port: stays off */ }
+  phone.pushState(data)
+}
+
 async function broadcast() {
   const data = await load()
   for (const w of [mainWin, widgetWin]) w?.webContents.send('state:update', data)
+  await syncPhone(data)
 }
 
 async function runTab(tabId: string) {
@@ -132,6 +156,12 @@ function registerIpc() {
 
   ipcMain.handle('data:openFolder', () => shell.showItemInFolder(dataFilePath()))
 
+  // --- Phone link (desktop only, never exposed over HTTP) ----------------
+  ipcMain.handle('phone:status', () => phone.status())
+  ipcMain.handle('phone:newCode', () => newPairingCode())
+  ipcMain.handle('phone:devices', () => listDevices())
+  ipcMain.handle('phone:revoke', async (_e, id: string) => { phone.kick(id); await revokeDevice(id) })
+
   ipcMain.handle('window:minimize', (e) => BrowserWindow.fromWebContents(e.sender)?.minimize())
   ipcMain.handle('window:maximize', (e) => { const w = BrowserWindow.fromWebContents(e.sender); if (w) w.isMaximized() ? w.unmaximize() : w.maximize() })
   ipcMain.handle('window:close', () => app.quit())
@@ -143,6 +173,7 @@ app.whenReady().then(async () => {
   createWidgetWindow()
   await reschedule()
   const data = await load()
+  void syncPhone(data)
   for (const t of data.tabs) void runTab(t.id)
   setInterval(() => void checkReminders(), 30_000)
   void checkReminders()
